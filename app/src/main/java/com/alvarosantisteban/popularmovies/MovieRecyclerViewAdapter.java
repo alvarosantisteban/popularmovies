@@ -1,12 +1,14 @@
 package com.alvarosantisteban.popularmovies;
 
+import android.content.Context;
 import android.support.v7.widget.RecyclerView;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.TextView;
+import android.widget.ImageView;
 
 import com.alvarosantisteban.popularmovies.model.Movie;
+import com.bumptech.glide.Glide;
 
 import java.util.List;
 
@@ -16,29 +18,32 @@ import java.util.List;
  */
 class MovieRecyclerViewAdapter extends RecyclerView.Adapter<MovieRecyclerViewAdapter.ViewHolder> {
 
-    private final List<Movie> mValues;
-    private final MoviesFragment.OnListFragmentInteractionListener mListener;
+    private static final String TAG = MovieRecyclerViewAdapter.class.getSimpleName();
 
-    MovieRecyclerViewAdapter(List<Movie> items, MoviesFragment.OnListFragmentInteractionListener listener) {
-        mValues = items;
+    private final List<Movie> mMovieList;
+    private final MoviesFragment.OnListFragmentInteractionListener mListener;
+    private final Context mContext;
+
+    MovieRecyclerViewAdapter(List<Movie> items, MoviesFragment.OnListFragmentInteractionListener listener, Context context) {
+        mMovieList = items;
         mListener = listener;
+        mContext = context;
     }
 
     @Override
     public ViewHolder onCreateViewHolder(ViewGroup parent, int viewType) {
         View view = LayoutInflater.from(parent.getContext())
                 .inflate(R.layout.movie_item, parent, false);
-        return new ViewHolder(view);
+        return new ViewHolder(view, mContext);
     }
 
     @Override
     public void onBindViewHolder(final ViewHolder holder, int position) {
-        if (mValues == null) {
+        if (mMovieList == null) {
             return;
         }
-        holder.mItem = mValues.get(position);
-        holder.mIdView.setText((int) mValues.get(position).getId());
-        holder.mTitle.setText(mValues.get(position).getOriginalTitle());
+        final Movie movie = mMovieList.get(position);
+        holder.setPosterImage(MoviesFragment.TMDB_IMAGE_BASE_URL + MoviesFragment.TMDB_IMAGE_QUALITY_PATH +movie.getPosterPath());
 
         holder.mView.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -46,7 +51,7 @@ class MovieRecyclerViewAdapter extends RecyclerView.Adapter<MovieRecyclerViewAda
                 if (null != mListener) {
                     // Notify the active callbacks interface (the activity, if the
                     // fragment is attached to one) that an item has been selected.
-                    mListener.onListFragmentInteraction(holder.mItem);
+                    mListener.onListFragmentInteraction(movie);
                 }
             }
         });
@@ -54,25 +59,24 @@ class MovieRecyclerViewAdapter extends RecyclerView.Adapter<MovieRecyclerViewAda
 
     @Override
     public int getItemCount() {
-        return mValues == null ? 0 : mValues.size();
+        return mMovieList == null ? 0 : mMovieList.size();
     }
 
     class ViewHolder extends RecyclerView.ViewHolder {
         final View mView;
-        final TextView mIdView;
-        final TextView mTitle;
-        Movie mItem;
+        final ImageView mPoster;
+        final Context mContext;
 
-        ViewHolder(View view) {
+        ViewHolder(View view, Context context) {
             super(view);
             mView = view;
-            mIdView = (TextView) view.findViewById(R.id.id);
-            mTitle = (TextView) view.findViewById(R.id.title);
+            mPoster = (ImageView) view.findViewById(R.id.movie_poster);
+            mContext = context;
         }
 
-        @Override
-        public String toString() {
-            return super.toString() + " '" + mTitle.getText() + "'";
+        void setPosterImage(String imageUrl) {
+            Glide.with(mContext).load(imageUrl)
+                    .into(mPoster);
         }
     }
 }

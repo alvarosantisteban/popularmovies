@@ -31,12 +31,16 @@ public class MoviesFragment extends Fragment {
     private static final String TMDB_BASE_URL = "https://api.themoviedb.org/3/";
     private static final String POPULAR_MOVIES_ENDPOINT = "movie/popular";
 
+    protected static final String TMDB_IMAGE_BASE_URL = "http://image.tmdb.org/t/p/";
+    protected static final String TMDB_IMAGE_QUALITY_PATH = "w342";
+
     public interface OnListFragmentInteractionListener {
         void onListFragmentInteraction(Movie movie);
     }
 
     private static final int NUM_COLUMNS = 2;
     private OnListFragmentInteractionListener mListener;
+    private RecyclerView mRecyclerView;
 
     /**
      * Mandatory empty constructor for the fragment manager to instantiate the
@@ -53,9 +57,8 @@ public class MoviesFragment extends Fragment {
         // Set the adapter
         if (view instanceof RecyclerView) {
             Context context = view.getContext();
-            RecyclerView recyclerView = (RecyclerView) view;
-            recyclerView.setLayoutManager(new GridLayoutManager(context, NUM_COLUMNS));
-//            recyclerView.setAdapter(new MovieRecyclerViewAdapter(Movie.getFakeData(), mListener));
+            mRecyclerView = (RecyclerView) view;
+            mRecyclerView.setLayoutManager(new GridLayoutManager(context, NUM_COLUMNS));
         }
 
         OttoBus.getInstance().register(this);
@@ -83,7 +86,9 @@ public class MoviesFragment extends Fragment {
     public void onAsyncTaskResult(DownloadMoviesAsyncTask.AsyncTaskResultEvent event) throws IOException {
         ObjectMapper mapper = new ObjectMapper();
         MovieContainer movieContainer = mapper.readValue(event.getResult(), MovieContainer.class);
-        Log.d(TAG, "-" +movieContainer.getMovies().get(0).getOriginalTitle() +"-");
+
+        // Set the movies in the adapter
+        mRecyclerView.setAdapter(new MovieRecyclerViewAdapter(movieContainer.getMovies(), mListener, getActivity()));
     }
 
     @Override
