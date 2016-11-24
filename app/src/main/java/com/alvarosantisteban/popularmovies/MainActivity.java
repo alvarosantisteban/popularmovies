@@ -5,6 +5,9 @@ import android.os.Bundle;
 
 import com.alvarosantisteban.popularmovies.model.Movie;
 
+/**
+ * The activity displaying a set of movies, displayed as a grid.
+ */
 public class MainActivity extends AppCompatActivity implements MoviesFragment.OnListFragmentInteractionListener{
 
     @Override

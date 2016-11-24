@@ -14,12 +14,12 @@ import java.util.List;
  * {@link RecyclerView.Adapter} that can display a {@link Movie} and makes a call to the
  * specified {@link MoviesFragment.OnListFragmentInteractionListener}.
  */
-public class MovieRecyclerViewAdapter extends RecyclerView.Adapter<MovieRecyclerViewAdapter.ViewHolder> {
+class MovieRecyclerViewAdapter extends RecyclerView.Adapter<MovieRecyclerViewAdapter.ViewHolder> {
 
     private final List<Movie> mValues;
     private final MoviesFragment.OnListFragmentInteractionListener mListener;
 
-    public MovieRecyclerViewAdapter(List<Movie> items, MoviesFragment.OnListFragmentInteractionListener listener) {
+    MovieRecyclerViewAdapter(List<Movie> items, MoviesFragment.OnListFragmentInteractionListener listener) {
         mValues = items;
         mListener = listener;
     }
@@ -57,13 +57,13 @@ public class MovieRecyclerViewAdapter extends RecyclerView.Adapter<MovieRecycler
         return mValues == null ? 0 : mValues.size();
     }
 
-    public class ViewHolder extends RecyclerView.ViewHolder {
-        public final View mView;
-        public final TextView mIdView;
-        public final TextView mTitle;
-        public Movie mItem;
+    class ViewHolder extends RecyclerView.ViewHolder {
+        final View mView;
+        final TextView mIdView;
+        final TextView mTitle;
+        Movie mItem;
 
-        public ViewHolder(View view) {
+        ViewHolder(View view) {
             super(view);
             mView = view;
             mIdView = (TextView) view.findViewById(R.id.id);
