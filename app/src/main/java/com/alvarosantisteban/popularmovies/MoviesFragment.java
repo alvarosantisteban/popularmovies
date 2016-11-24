@@ -1,20 +1,32 @@
 package com.alvarosantisteban.popularmovies;
 
 import android.content.Context;
+import android.net.Uri;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
 import android.support.v7.widget.GridLayoutManager;
 import android.support.v7.widget.RecyclerView;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 
 import com.alvarosantisteban.popularmovies.model.Movie;
+import com.squareup.otto.Subscribe;
+
+import java.net.MalformedURLException;
+import java.net.URL;
 
 /**
  * A fragment representing a list of movies in two columns.
  */
 public class MoviesFragment extends Fragment {
+
+    private static final String TAG = MoviesFragment.class.getSimpleName();
+    
+    private static final String APPID_PARAM = "api_key";
+    private static final String TMDB_BASE_URL = "https://api.themoviedb.org/3/";
+    private static final String POPULAR_MOVIES_ENDPOINT = "movie/popular";
 
     public interface OnListFragmentInteractionListener {
         void onListFragmentInteraction(Movie movie);
@@ -42,7 +54,31 @@ public class MoviesFragment extends Fragment {
             recyclerView.setLayoutManager(new GridLayoutManager(context, NUM_COLUMNS));
             recyclerView.setAdapter(new MovieRecyclerViewAdapter(Movie.getFakeData(), mListener));
         }
+
+        OttoBus.getInstance().register(this);
+
+        try {
+            URL moviesUrl = getUrl();
+            new DownloadMoviesAsyncTask().execute(moviesUrl);
+        } catch (MalformedURLException e) {
+            Log.e(TAG, e.toString());
+        }
+
         return view;
+    }
+
+    private URL getUrl() throws MalformedURLException{
+        Uri builtUri = Uri.parse(TMDB_BASE_URL).buildUpon()
+                .appendEncodedPath(POPULAR_MOVIES_ENDPOINT)
+                .appendQueryParameter(APPID_PARAM, BuildConfig.TMDB_API_KEY)
+                .build();
+        return new URL(builtUri.toString());
+    }
+
+    @Subscribe
+    public void onAsyncTaskResult(DownloadMoviesAsyncTask.AsyncTaskResultEvent event) {
+        // TODO Parse the resulting JSON
+        Log.d(TAG, "Resulting json: " +event.getResult());
     }
 
     @Override
@@ -60,5 +96,6 @@ public class MoviesFragment extends Fragment {
     public void onDetach() {
         super.onDetach();
         mListener = null;
+        OttoBus.getInstance().unregister(this);
     }
 }
