@@ -12,8 +12,11 @@ import android.view.View;
 import android.view.ViewGroup;
 
 import com.alvarosantisteban.popularmovies.model.Movie;
+import com.alvarosantisteban.popularmovies.model.MovieContainer;
+import com.fasterxml.jackson.databind.ObjectMapper;
 import com.squareup.otto.Subscribe;
 
+import java.io.IOException;
 import java.net.MalformedURLException;
 import java.net.URL;
 
@@ -52,7 +55,7 @@ public class MoviesFragment extends Fragment {
             Context context = view.getContext();
             RecyclerView recyclerView = (RecyclerView) view;
             recyclerView.setLayoutManager(new GridLayoutManager(context, NUM_COLUMNS));
-            recyclerView.setAdapter(new MovieRecyclerViewAdapter(Movie.getFakeData(), mListener));
+//            recyclerView.setAdapter(new MovieRecyclerViewAdapter(Movie.getFakeData(), mListener));
         }
 
         OttoBus.getInstance().register(this);
@@ -75,10 +78,12 @@ public class MoviesFragment extends Fragment {
         return new URL(builtUri.toString());
     }
 
+    @SuppressWarnings("unused") // Used to receive results from Otto bus
     @Subscribe
-    public void onAsyncTaskResult(DownloadMoviesAsyncTask.AsyncTaskResultEvent event) {
-        // TODO Parse the resulting JSON
-        Log.d(TAG, "Resulting json: " +event.getResult());
+    public void onAsyncTaskResult(DownloadMoviesAsyncTask.AsyncTaskResultEvent event) throws IOException {
+        ObjectMapper mapper = new ObjectMapper();
+        MovieContainer movieContainer = mapper.readValue(event.getResult(), MovieContainer.class);
+        Log.d(TAG, "-" +movieContainer.getMovies().get(0).getOriginalTitle() +"-");
     }
 
     @Override

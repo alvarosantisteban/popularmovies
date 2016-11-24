@@ -37,8 +37,8 @@ class MovieRecyclerViewAdapter extends RecyclerView.Adapter<MovieRecyclerViewAda
             return;
         }
         holder.mItem = mValues.get(position);
-        holder.mIdView.setText(mValues.get(position).getId());
-        holder.mTitle.setText(mValues.get(position).getTitle());
+        holder.mIdView.setText((int) mValues.get(position).getId());
+        holder.mTitle.setText(mValues.get(position).getOriginalTitle());
 
         holder.mView.setOnClickListener(new View.OnClickListener() {
             @Override
