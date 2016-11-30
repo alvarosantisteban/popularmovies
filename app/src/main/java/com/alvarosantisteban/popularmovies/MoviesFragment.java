@@ -29,7 +29,8 @@ public class MoviesFragment extends Fragment {
     
     private static final String APPID_PARAM = "api_key";
     private static final String TMDB_BASE_URL = "https://api.themoviedb.org/3/";
-    private static final String POPULAR_MOVIES_ENDPOINT = "movie/popular";
+    protected static final String POPULAR_MOVIES_ENDPOINT = "movie/popular";
+    protected static final String TOP_RATED_ENDPOINT = "movie/top_rated";
 
     protected static final String TMDB_IMAGE_BASE_URL = "http://image.tmdb.org/t/p/";
     protected static final String TMDB_IMAGE_QUALITY_PATH = "w342";
@@ -63,19 +64,23 @@ public class MoviesFragment extends Fragment {
 
         OttoBus.getInstance().register(this);
 
-        try {
-            URL moviesUrl = getUrl();
-            new DownloadMoviesAsyncTask().execute(moviesUrl);
-        } catch (MalformedURLException e) {
-            Log.e(TAG, e.toString());
-        }
+        downloadMoviesSortedBy(POPULAR_MOVIES_ENDPOINT);
 
         return view;
     }
 
-    private URL getUrl() throws MalformedURLException{
+    protected void downloadMoviesSortedBy(String endPoint) {
+        try {
+            URL moviesUrl = getUrl(endPoint);
+            new DownloadMoviesAsyncTask().execute(moviesUrl);
+        } catch (MalformedURLException e) {
+            Log.e(TAG, e.toString());
+        }
+    }
+
+    private URL getUrl(String endPoint) throws MalformedURLException{
         Uri builtUri = Uri.parse(TMDB_BASE_URL).buildUpon()
-                .appendEncodedPath(POPULAR_MOVIES_ENDPOINT)
+                .appendEncodedPath(endPoint)
                 .appendQueryParameter(APPID_PARAM, BuildConfig.TMDB_API_KEY)
                 .build();
         return new URL(builtUri.toString());
