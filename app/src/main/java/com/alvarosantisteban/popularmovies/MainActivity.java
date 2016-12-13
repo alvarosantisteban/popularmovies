@@ -1,5 +1,6 @@
 package com.alvarosantisteban.popularmovies;
 
+import android.content.Intent;
 import android.os.Bundle;
 import android.support.v4.view.MenuItemCompat;
 import android.support.v7.app.AppCompatActivity;
@@ -23,6 +24,7 @@ public class MainActivity extends AppCompatActivity implements MoviesFragment.On
 
     private static final int POS_MOST_POPULAR = 0;
     private static final int POS_TOP_RATED = 1;
+    protected static final String EXTRA_MOVIE = "ExtraMovie";
 
     // Used to distinguish between real user touches and automatic calls on onItemSelected
     private boolean hasUserTouchedSpinner = false;
@@ -35,7 +37,9 @@ public class MainActivity extends AppCompatActivity implements MoviesFragment.On
 
     @Override
     public void onListFragmentInteraction(Movie item) {
-        // TODO Open the detail site of the movie
+        Intent intent = new Intent(this, DetailActivity.class);
+        intent.putExtra(EXTRA_MOVIE, item);
+        startActivity(intent);
     }
 
     @Override

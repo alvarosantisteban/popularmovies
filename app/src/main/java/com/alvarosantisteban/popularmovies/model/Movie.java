@@ -1,5 +1,8 @@
 package com.alvarosantisteban.popularmovies.model;
 
+import android.os.Parcel;
+import android.os.Parcelable;
+
 import com.fasterxml.jackson.annotation.JsonCreator;
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import com.fasterxml.jackson.annotation.JsonProperty;
@@ -8,7 +11,7 @@ import com.fasterxml.jackson.annotation.JsonProperty;
  * Represents a movie from The Movie DB.
  */
 @JsonIgnoreProperties(ignoreUnknown=true)
-public class Movie {
+public class Movie implements Parcelable{
 
     private final long id;
     private final String originalTitle;
@@ -96,5 +99,51 @@ public class Movie {
 
     public double getVoteAverage() {
         return voteAverage;
+    }
+
+    protected Movie(Parcel in) {
+        id = in.readLong();
+        originalTitle = in.readString();
+        originalLanguage = in.readString();
+        posterPath = in.readString();
+        adult = in.readByte() != 0;
+        overview = in.readString();
+        releaseDate = in.readString();
+        popularity = in.readDouble();
+        voteCount = in.readInt();
+        video = in.readByte() != 0;
+        voteAverage = in.readDouble();
+    }
+
+    public static final Creator<Movie> CREATOR = new Creator<Movie>() {
+        @Override
+        public Movie createFromParcel(Parcel in) {
+            return new Movie(in);
+        }
+
+        @Override
+        public Movie[] newArray(int size) {
+            return new Movie[size];
+        }
+    };
+
+    @Override
+    public int describeContents() {
+        return 0;
+    }
+
+    @Override
+    public void writeToParcel(Parcel dest, int flags) {
+        dest.writeLong(id);
+        dest.writeString(originalTitle);
+        dest.writeString(originalLanguage);
+        dest.writeString(posterPath);
+        dest.writeByte((byte) (adult ? 1 : 0));
+        dest.writeString(overview);
+        dest.writeString(releaseDate);
+        dest.writeDouble(popularity);
+        dest.writeInt(voteCount);
+        dest.writeByte((byte) (video ? 1 : 0));
+        dest.writeDouble(voteAverage);
     }
 }
