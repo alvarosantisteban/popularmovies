@@ -1,0 +1,1 @@
+Before deploying this project, please add a valid API Key for TMDB in the app/build.gradle file.
