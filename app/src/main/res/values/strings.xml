@@ -1,6 +1,8 @@
 <resources>
     <string name="app_name">Popular Movies</string>
     <string name="order">Sorting order</string>
+    <string name="film_vote">Average vote: %.1f</string>
+    <string name="film_release_date">Released: %s</string>
 
     <string-array name="sort_order">
         <item>Most popular</item>

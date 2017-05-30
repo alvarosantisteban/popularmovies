@@ -10,6 +10,9 @@ import com.bumptech.glide.Glide;
 
 import static com.alvarosantisteban.popularmovies.MainActivity.EXTRA_MOVIE;
 
+/**
+ * Displays the basic information of a film.
+ */
 public class DetailActivity extends AppCompatActivity {
 
     @Override
@@ -26,12 +29,15 @@ public class DetailActivity extends AppCompatActivity {
         TextView releaseDate = (TextView) findViewById(R.id.detail_movie_release_date);
 
         if (movie != null) {
+            // Set the title of the activity
+            setTitle(movie.getOriginalTitle());
+
             Glide.with(this).load(MoviesFragment.TMDB_IMAGE_BASE_URL + MoviesFragment.TMDB_IMAGE_QUALITY_PATH +movie.getPosterPath())
                     .into(poster);
             title.setText(movie.getOriginalTitle());
             description.setText(movie.getOverview());
-            usersRating.setText("Average vote: " +movie.getVoteAverage());
-            releaseDate.setText(movie.getReleaseDate());
+            usersRating.setText(getString(R.string.film_vote, movie.getVoteAverage()));
+            releaseDate.setText(getString(R.string.film_release_date, movie.getReleaseDate()));
         }
     }
 }

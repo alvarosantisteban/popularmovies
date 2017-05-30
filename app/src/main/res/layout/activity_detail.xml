@@ -4,6 +4,7 @@
     android:id="@+id/activity_detail"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
+    android:background="@color/colorPrimaryLight"
     tools:context="com.alvarosantisteban.popularmovies.DetailActivity">
 
     <LinearLayout
@@ -13,23 +14,50 @@
 
         <ImageView
             android:id="@+id/detail_movie_poster"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content" />
-        <TextView
-            android:id="@+id/detail_movie_title"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content" />
-        <TextView
-            android:id="@+id/detail_movie_description"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content" />
-        <TextView
-            android:id="@+id/detail_movie_rating"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content" />
-        <TextView
-            android:id="@+id/detail_movie_release_date"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content" />
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:scaleType="centerCrop"/>
+
+        <LinearLayout
+            android:orientation="vertical"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_margin="@dimen/activity_vertical_margin">
+            <TextView
+                android:id="@+id/detail_movie_title"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:textSize="@dimen/big_font_size"
+                tools:text="Title"
+                android:layout_marginBottom="@dimen/activity_vertical_margin"/>
+            <TextView
+                android:id="@+id/detail_movie_description"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:textSize="@dimen/intermediate_font_size"
+                tools:text="Long description dasadnsa kjdkjskl jfkdlsjf klfjdsfdsjfkljf dsjfsdkfjdfklsdjfi jfdskj"
+                android:layout_marginBottom="@dimen/activity_vertical_margin"/>
+
+            <LinearLayout
+                android:orientation="horizontal"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content">
+                <TextView
+                    android:id="@+id/detail_movie_rating"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:textSize="@dimen/small_font_size"
+                    android:layout_weight="1"
+                    tools:text="Average vote: 5.4"/>
+                <TextView
+                    android:id="@+id/detail_movie_release_date"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:textSize="@dimen/small_font_size"
+                    android:gravity="right"
+                    android:layout_weight="1"
+                    tools:text="Released: 2017-01-02"/>
+                </LinearLayout>
+        </LinearLayout>
     </LinearLayout>
 </ScrollView>
