@@ -1,6 +1,8 @@
 package com.alvarosantisteban.popularmovies;
 
 import android.content.Context;
+import android.net.ConnectivityManager;
+import android.net.NetworkInfo;
 import android.net.Uri;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
@@ -10,6 +12,7 @@ import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.Toast;
 
 import com.alvarosantisteban.popularmovies.model.Movie;
 import com.alvarosantisteban.popularmovies.model.MovieContainer;
@@ -70,11 +73,15 @@ public class MoviesFragment extends Fragment {
     }
 
     protected void downloadMoviesSortedBy(String endPoint) {
-        try {
-            URL moviesUrl = getUrl(endPoint);
-            new DownloadMoviesAsyncTask().execute(moviesUrl);
-        } catch (MalformedURLException e) {
-            Log.e(TAG, e.toString());
+        if (isNetworkAvailable()) {
+            try {
+                URL moviesUrl = getUrl(endPoint);
+                new DownloadMoviesAsyncTask().execute(moviesUrl);
+            } catch (MalformedURLException e) {
+                Log.e(TAG, e.toString());
+            }
+        }else {
+            Toast.makeText(getContext(), getString(R.string.error_no_internet_connection), Toast.LENGTH_LONG).show();
         }
     }
 
@@ -84,6 +91,13 @@ public class MoviesFragment extends Fragment {
                 .appendQueryParameter(APPID_PARAM, BuildConfig.TMDB_API_KEY)
                 .build();
         return new URL(builtUri.toString());
+    }
+    
+    private boolean isNetworkAvailable() {
+        ConnectivityManager connectivityManager
+                = (ConnectivityManager) getActivity().getSystemService(Context.CONNECTIVITY_SERVICE);
+        NetworkInfo activeNetworkInfo = connectivityManager.getActiveNetworkInfo();
+        return activeNetworkInfo != null && activeNetworkInfo.isConnected();
     }
 
     @SuppressWarnings("unused") // Used to receive results from Otto bus
