@@ -38,7 +38,7 @@ public class MoviesFragment extends Fragment {
     protected static final String TMDB_IMAGE_BASE_URL = "http://image.tmdb.org/t/p/";
     protected static final String TMDB_IMAGE_QUALITY_PATH = "w342";
 
-    public interface OnListFragmentInteractionListener {
+    interface OnListFragmentInteractionListener {
         void onListFragmentInteraction(Movie movie);
     }
 
@@ -92,7 +92,7 @@ public class MoviesFragment extends Fragment {
                 .build();
         return new URL(builtUri.toString());
     }
-    
+
     private boolean isNetworkAvailable() {
         ConnectivityManager connectivityManager
                 = (ConnectivityManager) getActivity().getSystemService(Context.CONNECTIVITY_SERVICE);
@@ -103,11 +103,15 @@ public class MoviesFragment extends Fragment {
     @SuppressWarnings("unused") // Used to receive results from Otto bus
     @Subscribe
     public void onAsyncTaskResult(DownloadMoviesAsyncTask.AsyncTaskResultEvent event) throws IOException {
-        ObjectMapper mapper = new ObjectMapper();
-        MovieContainer movieContainer = mapper.readValue(event.getResult(), MovieContainer.class);
+        if(event.getResult() != null) {
+            ObjectMapper mapper = new ObjectMapper();
+            MovieContainer movieContainer = mapper.readValue(event.getResult(), MovieContainer.class);
 
-        // Set the movies in the adapter
-        mRecyclerView.setAdapter(new MovieRecyclerViewAdapter(movieContainer.getMovies(), mListener, getActivity()));
+            // Set the movies in the adapter
+            mRecyclerView.setAdapter(new MovieRecyclerViewAdapter(movieContainer.getMovies(), mListener, getActivity()));
+        } else {
+            Toast.makeText(getContext(), getString(R.string.error_data_null), Toast.LENGTH_SHORT).show();
+        }
     }
 
     @Override

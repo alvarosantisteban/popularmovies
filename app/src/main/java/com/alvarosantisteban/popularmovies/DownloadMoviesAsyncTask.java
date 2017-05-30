@@ -15,7 +15,7 @@ import java.net.URL;
  * Small task to asynchronously download the json from the URL passed by parameter and post the
  * result on the OttoBus.
  */
-public class DownloadMoviesAsyncTask extends AsyncTask<URL, Void, String> {
+class DownloadMoviesAsyncTask extends AsyncTask<URL, Void, String> {
 
     private static final String TAG = DownloadMoviesAsyncTask.class.getSimpleName();
 
@@ -36,7 +36,7 @@ public class DownloadMoviesAsyncTask extends AsyncTask<URL, Void, String> {
 
             // Read the input stream into a String
             InputStream inputStream = urlConnection.getInputStream();
-            StringBuffer buffer = new StringBuffer();
+            StringBuilder stringBuilder = new StringBuilder();
             if (inputStream == null) {
                 // Nothing to do.
                 return null;
@@ -46,18 +46,17 @@ public class DownloadMoviesAsyncTask extends AsyncTask<URL, Void, String> {
             String line;
             while ((line = reader.readLine()) != null) {
                 // Since it's JSON, adding a newline isn't necessary (it won't affect parsing)
-                // But it does make debugging a *lot* easier if you print out the completed
-                // buffer for debugging.
-                buffer.append(line + "\n");
+                // But it does make debugging easier
+                stringBuilder.append(line).append("\n");
             }
 
-            if (buffer.length() == 0) {
+            if (stringBuilder.length() == 0) {
                 // Stream was empty.  No point in parsing.
                 return null;
             }
-            moviesJsonStr = buffer.toString();
+            moviesJsonStr = stringBuilder.toString();
         } catch (IOException e) {
-            Log.e(TAG, "Error ", e);
+            Log.e(TAG, "IOException: ", e);
             // If the code didn't successfully get the movies data, there's no point in attempting
             // to parse it.
             return null;
@@ -69,7 +68,7 @@ public class DownloadMoviesAsyncTask extends AsyncTask<URL, Void, String> {
                 try {
                     reader.close();
                 } catch (final IOException e) {
-                    Log.e(TAG, "Error closing stream", e);
+                    Log.e(TAG, "Error while closing stream: ", e);
                 }
             }
         }
@@ -84,16 +83,17 @@ public class DownloadMoviesAsyncTask extends AsyncTask<URL, Void, String> {
     /**
      * Small helper class to encapsulate the result of an async task.
      */
-    public class AsyncTaskResultEvent {
+    class AsyncTaskResultEvent {
 
-        @Nullable private String result;
+        @Nullable
+        private String result;
 
-        public AsyncTaskResultEvent(@Nullable String result) {
+        AsyncTaskResultEvent(@Nullable String result) {
             this.result = result;
         }
 
         @Nullable
-        public String getResult() {
+        String getResult() {
             return result;
         }
     }

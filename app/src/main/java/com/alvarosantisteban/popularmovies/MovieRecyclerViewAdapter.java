@@ -18,8 +18,6 @@ import java.util.List;
  */
 class MovieRecyclerViewAdapter extends RecyclerView.Adapter<MovieRecyclerViewAdapter.ViewHolder> {
 
-    private static final String TAG = MovieRecyclerViewAdapter.class.getSimpleName();
-
     private final List<Movie> mMovieList;
     private final MoviesFragment.OnListFragmentInteractionListener mListener;
     private final Context mContext;
