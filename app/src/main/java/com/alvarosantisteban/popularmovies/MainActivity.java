@@ -14,16 +14,13 @@ import android.widget.Spinner;
 
 import com.alvarosantisteban.popularmovies.model.Movie;
 
-import static com.alvarosantisteban.popularmovies.MoviesFragment.POPULAR_MOVIES_ENDPOINT;
-import static com.alvarosantisteban.popularmovies.MoviesFragment.TOP_RATED_ENDPOINT;
-
 /**
  * The activity displaying a set of movies, displayed as a grid.
  */
 public class MainActivity extends AppCompatActivity implements MoviesFragment.OnListFragmentInteractionListener, AdapterView.OnItemSelectedListener {
 
-    private static final int POS_MOST_POPULAR = 0;
-    private static final int POS_TOP_RATED = 1;
+    public static final int POS_MOST_POPULAR = 0;
+    public static final int POS_TOP_RATED = 1;
     protected static final String EXTRA_MOVIE = "ExtraMovie";
 
     // Used to distinguish between real user touches and automatic calls on onItemSelected
@@ -72,19 +69,10 @@ public class MainActivity extends AppCompatActivity implements MoviesFragment.On
         }
 
         hasUserTouchedSpinner = false;
-        String endPoint = POPULAR_MOVIES_ENDPOINT;
-        switch (position) {
-            case POS_MOST_POPULAR:
-                endPoint = POPULAR_MOVIES_ENDPOINT;
-                break;
-            case POS_TOP_RATED:
-                endPoint = TOP_RATED_ENDPOINT;
-                break;
-        }
 
         MoviesFragment fragment = (MoviesFragment) getSupportFragmentManager().findFragmentById(R.id.movies_fragment);
         if(fragment != null) {
-            fragment.downloadMoviesSortedBy(endPoint);
+            fragment.downloadMoviesSortedBy(position);
         }
     }
 
