@@ -42,7 +42,6 @@ public class MoviesFragment extends Fragment {
         void onListFragmentInteraction(Movie movie);
     }
 
-    private static final int NUM_COLUMNS = 2;
     private OnListFragmentInteractionListener mListener;
     private RecyclerView mRecyclerView;
 
@@ -62,7 +61,7 @@ public class MoviesFragment extends Fragment {
         if (view instanceof RecyclerView) {
             Context context = view.getContext();
             mRecyclerView = (RecyclerView) view;
-            mRecyclerView.setLayoutManager(new GridLayoutManager(context, NUM_COLUMNS));
+            mRecyclerView.setLayoutManager(new GridLayoutManager(context, getResources().getInteger(R.integer.num_columns)));
         }
 
         OttoBus.getInstance().register(this);

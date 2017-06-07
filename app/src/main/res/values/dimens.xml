@@ -8,4 +8,6 @@
     <dimen name="big_font_size">20sp</dimen>
     <dimen name="intermediate_font_size">15sp</dimen>
     <dimen name="small_font_size">12sp</dimen>
+
+    <integer name="num_columns">2</integer>
 </resources>
