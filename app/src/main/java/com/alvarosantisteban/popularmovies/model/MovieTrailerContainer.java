@@ -10,17 +10,14 @@ import java.util.List;
  * Represents a container of movie's trailers.
  */
 @JsonIgnoreProperties(ignoreUnknown=true)
-public class MovieTrailerContainer {
+public class MovieTrailerContainer extends BaseMovieContainer {
 
-    private final int page;
     private final List<MovieTrailer> movieTrailers;
-    private final int totalNumResults;
 
     @JsonIgnoreProperties(ignoreUnknown=true)
-    public MovieTrailerContainer(int page, List<MovieTrailer> movieTrailers, int totalNumResults) {
-        this.page = page;
+    MovieTrailerContainer(int page, List<MovieTrailer> movieTrailers, int totalNumResults) {
+        super(page, totalNumResults);
         this.movieTrailers = movieTrailers;
-        this.totalNumResults = totalNumResults;
     }
 
     @JsonCreator

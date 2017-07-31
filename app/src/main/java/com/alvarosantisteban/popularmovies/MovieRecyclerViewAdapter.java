@@ -7,6 +7,7 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ImageView;
 
+import com.alvarosantisteban.popularmovies.api.MoviesAPI;
 import com.alvarosantisteban.popularmovies.model.Movie;
 import com.bumptech.glide.Glide;
 
@@ -41,7 +42,7 @@ class MovieRecyclerViewAdapter extends RecyclerView.Adapter<MovieRecyclerViewAda
             return;
         }
         final Movie movie = mMovieList.get(position);
-        holder.setPosterImage(MoviesFragment.TMDB_IMAGE_BASE_URL + MoviesFragment.TMDB_IMAGE_QUALITY_PATH +movie.getPosterPath());
+        holder.setPosterImage(MoviesAPI.TMDB_IMAGE_BASE_URL + MoviesAPI.TMDB_IMAGE_QUALITY_PATH +movie.getPosterPath());
 
         holder.mView.setOnClickListener(new View.OnClickListener() {
             @Override

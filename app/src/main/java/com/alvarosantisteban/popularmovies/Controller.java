@@ -3,6 +3,8 @@ package com.alvarosantisteban.popularmovies;
 import android.support.annotation.NonNull;
 import android.util.Log;
 
+import com.alvarosantisteban.popularmovies.api.MoviesAPI;
+import com.alvarosantisteban.popularmovies.api.RetrofitResultEvent;
 import com.alvarosantisteban.popularmovies.model.MovieContainer;
 import com.fasterxml.jackson.databind.ObjectMapper;
 
@@ -22,12 +24,11 @@ import static com.alvarosantisteban.popularmovies.MainActivity.POS_TOP_RATED;
 class Controller implements Callback<MovieContainer> {
 
     private static final String TAG = Controller.class.getSimpleName();
-    private static final String TMDB_BASE_URL = "https://api.themoviedb.org/3/";
 
     void start(int endPoint) {
 
         Retrofit retrofit = new Retrofit.Builder()
-                .baseUrl(TMDB_BASE_URL)
+                .baseUrl(MoviesAPI.TMDB_BASE_URL)
                 .addConverterFactory(JacksonConverterFactory.create(new ObjectMapper()))
                 .build();
 
@@ -60,23 +61,5 @@ class Controller implements Callback<MovieContainer> {
     @Override
     public void onFailure(@NonNull Call<MovieContainer> call,@NonNull Throwable t) {
         Log.e(TAG, "onFailure: " +t.toString());
-    }
-
-    /**
-     * Small helper class to encapsulate the result of the retrofit request.
-     */
-    class RetrofitResultEvent {
-
-        @NonNull
-        private MovieContainer movieContainer;
-
-        RetrofitResultEvent(@NonNull MovieContainer movieContainer) {
-            this.movieContainer = movieContainer;
-        }
-
-        @NonNull
-        MovieContainer getMovieContainer() {
-            return movieContainer;
-        }
     }
 }

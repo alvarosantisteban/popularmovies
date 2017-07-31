@@ -12,6 +12,7 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Toast;
 
+import com.alvarosantisteban.popularmovies.api.RetrofitResultEvent;
 import com.alvarosantisteban.popularmovies.model.Movie;
 import com.alvarosantisteban.popularmovies.model.MovieContainer;
 import com.squareup.otto.Subscribe;
@@ -26,9 +27,6 @@ import static com.alvarosantisteban.popularmovies.MainActivity.POS_MOST_POPULAR;
 public class MoviesFragment extends Fragment {
 
     private static final String TAG = MoviesFragment.class.getSimpleName();
-
-    protected static final String TMDB_IMAGE_BASE_URL = "http://image.tmdb.org/t/p/";
-    protected static final String TMDB_IMAGE_QUALITY_PATH = "w342";
 
     interface OnListFragmentInteractionListener {
         void onListFragmentInteraction(Movie movie);
@@ -81,10 +79,12 @@ public class MoviesFragment extends Fragment {
 
     @SuppressWarnings("unused") // Used to receive results from Otto bus
     @Subscribe
-    public void onAsyncTaskResult(Controller.RetrofitResultEvent event) throws IOException {
-        MovieContainer movieContainer = event.getMovieContainer();
-        // Set the movies in the adapter
-        mRecyclerView.setAdapter(new MovieRecyclerViewAdapter(movieContainer.getMovies(), mListener, getActivity()));
+    public void onAsyncTaskResult(RetrofitResultEvent event) throws IOException {
+        if(event.getMovieContainer() instanceof MovieContainer) {
+            MovieContainer movieContainer = (MovieContainer) event.getMovieContainer();
+            // Set the movies in the adapter
+            mRecyclerView.setAdapter(new MovieRecyclerViewAdapter(movieContainer.getMovies(), mListener, getActivity()));
+        }
     }
 
     @Override

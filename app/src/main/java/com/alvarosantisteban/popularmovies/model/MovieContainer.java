@@ -10,17 +10,14 @@ import java.util.List;
  * Represents a container of movies.
  */
 @JsonIgnoreProperties(ignoreUnknown=true)
-public class MovieContainer {
+public class MovieContainer extends BaseMovieContainer{
 
-    private final int page;
     private final List<Movie> movies;
-    private final int totalNumResults;
 
     @JsonIgnoreProperties(ignoreUnknown=true)
     public MovieContainer(int page, List<Movie> movies, int totalNumResults) {
-        this.page = page;
+        super(page, totalNumResults);
         this.movies = movies;
-        this.totalNumResults = totalNumResults;
     }
 
     @JsonCreator
