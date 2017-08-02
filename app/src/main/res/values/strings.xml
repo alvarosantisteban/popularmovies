@@ -6,6 +6,8 @@
     <string name="error_data_null">Data can not be displayed</string>
 
     <string name="detail_fav_button">Mark as\nfavourite</string>
+    <string name="detail_movie_trailers_label">Trailers</string>
+    <string name="detail_movie_reviews_label">Reviews</string>
 
     <string-array name="sort_order">
         <item>Most popular</item>

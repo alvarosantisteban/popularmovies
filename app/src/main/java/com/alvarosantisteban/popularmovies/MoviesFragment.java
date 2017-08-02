@@ -83,7 +83,7 @@ public class MoviesFragment extends Fragment {
         if(event.getMovieContainer() instanceof MovieContainer) {
             MovieContainer movieContainer = (MovieContainer) event.getMovieContainer();
             // Set the movies in the adapter
-            mRecyclerView.setAdapter(new MovieRecyclerViewAdapter(movieContainer.getMovies(), mListener, getActivity()));
+            mRecyclerView.setAdapter(new MovieRVAdapter(movieContainer.getMovies(), mListener, getActivity()));
         }
     }
 

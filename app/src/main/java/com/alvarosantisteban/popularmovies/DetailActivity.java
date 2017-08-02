@@ -1,17 +1,24 @@
 package com.alvarosantisteban.popularmovies;
 
+import android.content.Intent;
+import android.net.Uri;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.support.v7.app.AppCompatActivity;
+import android.support.v7.widget.LinearLayoutManager;
+import android.support.v7.widget.RecyclerView;
+import android.view.View;
 import android.widget.ImageView;
+import android.widget.LinearLayout;
 import android.widget.TextView;
-import android.widget.Toast;
 
 import com.alvarosantisteban.popularmovies.api.MoviesAPI;
 import com.alvarosantisteban.popularmovies.api.RetrofitResultEvent;
 import com.alvarosantisteban.popularmovies.model.BaseMovieContainer;
 import com.alvarosantisteban.popularmovies.model.Movie;
+import com.alvarosantisteban.popularmovies.model.MovieReview;
 import com.alvarosantisteban.popularmovies.model.MovieReviewContainer;
+import com.alvarosantisteban.popularmovies.model.MovieTrailer;
 import com.alvarosantisteban.popularmovies.model.MovieTrailerContainer;
 import com.bumptech.glide.Glide;
 import com.squareup.otto.Subscribe;
@@ -23,7 +30,14 @@ import static com.alvarosantisteban.popularmovies.MainActivity.EXTRA_MOVIE;
 /**
  * Displays the basic information of a film.
  */
-public class DetailActivity extends AppCompatActivity {
+public class DetailActivity extends AppCompatActivity implements OnListInteractionListener {
+
+    private static final String TAG = DetailActivity.class.getSimpleName();
+
+    private LinearLayout trailersSection;
+    private LinearLayout reviewsSection;
+    private RecyclerView trailersRv;
+    private RecyclerView reviewsRv;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -39,6 +53,17 @@ public class DetailActivity extends AppCompatActivity {
         TextView description = (TextView) findViewById(R.id.detail_movie_description);
         TextView usersRating = (TextView) findViewById(R.id.detail_movie_rating);
         TextView releaseDate = (TextView) findViewById(R.id.detail_movie_release_date);
+
+        trailersSection = (LinearLayout) findViewById(R.id.trailer_section);
+        reviewsSection = (LinearLayout) findViewById(R.id.reviews_section);
+        trailersRv = (RecyclerView) trailersSection.findViewById(R.id.detail_rv);
+        reviewsRv = (RecyclerView) reviewsSection.findViewById(R.id.detail_rv);
+
+        trailersRv.setLayoutManager(new LinearLayoutManager(this, LinearLayoutManager.VERTICAL, false));
+        reviewsRv.setLayoutManager(new LinearLayoutManager(this, LinearLayoutManager.HORIZONTAL, false));
+
+        TextView reviewsLabel = (TextView) reviewsSection.findViewById(R.id.detail_label);
+        reviewsLabel.setText(R.string.detail_movie_reviews_label);
 
         if (movie != null) {
             // Set the title of the activity
@@ -78,15 +103,21 @@ public class DetailActivity extends AppCompatActivity {
             MovieReviewContainer movieReviewContainer = (MovieReviewContainer) container;
 
             if (movieReviewContainer.getMovieReviews().size() > 0) {
-                String review = movieReviewContainer.getMovieReviews().get(0).getContent();
-                Toast.makeText(this, review, Toast.LENGTH_LONG).show();
+                // Set the reviews in the recyclerview
+                reviewsRv.setAdapter(new MovieReviewRVAdapter(movieReviewContainer.getMovieReviews(), this, this));
+            } else {
+                // Hide the whole section
+                reviewsSection.setVisibility(View.GONE);
             }
         } else if (container instanceof MovieTrailerContainer) {
             MovieTrailerContainer movieTrailerContainer = (MovieTrailerContainer) container;
 
             if (movieTrailerContainer.getMovieTrailers().size() > 0) {
-                String review = movieTrailerContainer.getMovieTrailers().get(0).getType();
-                Toast.makeText(this, review, Toast.LENGTH_LONG).show();
+                // Set the trailers in the recyclerview
+                trailersRv.setAdapter(new MovieTrailerRVAdapter(movieTrailerContainer.getMovieTrailers(), this, this));
+            } else {
+                // Hide the whole section
+                trailersSection.setVisibility(View.GONE);
             }
         }
     }
@@ -95,6 +126,16 @@ public class DetailActivity extends AppCompatActivity {
     public void onDestroy() {
         super.onDestroy();
         OttoBus.getInstance().unregister(this);
+    }
+
+    @Override
+    public void onItemClicked(MovieReview movieReview) {
+        startActivity(new Intent(Intent.ACTION_VIEW, Uri.parse(movieReview.getUrl())));
+    }
+
+    @Override
+    public void onItemClicked(MovieTrailer movieTrailer) {
+        startActivity(new Intent(Intent.ACTION_VIEW, Uri.parse("http://www.youtube.com/watch?v=" +movieTrailer.getKey())));
     }
 
     @NonNull

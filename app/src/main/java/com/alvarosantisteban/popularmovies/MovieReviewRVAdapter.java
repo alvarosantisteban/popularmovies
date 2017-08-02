@@ -5,25 +5,23 @@ import android.support.v7.widget.RecyclerView;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.ImageView;
+import android.widget.TextView;
 
-import com.alvarosantisteban.popularmovies.api.MoviesAPI;
-import com.alvarosantisteban.popularmovies.model.Movie;
-import com.bumptech.glide.Glide;
+import com.alvarosantisteban.popularmovies.model.MovieReview;
 
 import java.util.List;
 
 /**
- * {@link RecyclerView.Adapter} that can display a {@link Movie} and makes a call to the
- * specified {@link MoviesFragment.OnListFragmentInteractionListener}.
+ * {@link RecyclerView.Adapter} that can display a {@link MovieReview} and makes a call to the
+ * specified {@link OnListInteractionListener}.
  */
-class MovieRecyclerViewAdapter extends RecyclerView.Adapter<MovieRecyclerViewAdapter.ViewHolder> {
+class MovieReviewRVAdapter extends RecyclerView.Adapter<MovieReviewRVAdapter.ViewHolder> {
 
-    private final List<Movie> mMovieList;
-    private final MoviesFragment.OnListFragmentInteractionListener mListener;
+    private final List<MovieReview> mMovieList;
+    private final OnListInteractionListener mListener;
     private final Context mContext;
 
-    MovieRecyclerViewAdapter(List<Movie> items, MoviesFragment.OnListFragmentInteractionListener listener, Context context) {
+    MovieReviewRVAdapter(List<MovieReview> items, OnListInteractionListener listener, Context context) {
         mMovieList = items;
         mListener = listener;
         mContext = context;
@@ -32,7 +30,7 @@ class MovieRecyclerViewAdapter extends RecyclerView.Adapter<MovieRecyclerViewAda
     @Override
     public ViewHolder onCreateViewHolder(ViewGroup parent, int viewType) {
         View view = LayoutInflater.from(parent.getContext())
-                .inflate(R.layout.movie_item, parent, false);
+                .inflate(R.layout.movie_review_item, parent, false);
         return new ViewHolder(view, mContext);
     }
 
@@ -41,8 +39,8 @@ class MovieRecyclerViewAdapter extends RecyclerView.Adapter<MovieRecyclerViewAda
         if (mMovieList == null) {
             return;
         }
-        final Movie movie = mMovieList.get(position);
-        holder.setPosterImage(MoviesAPI.TMDB_IMAGE_BASE_URL + MoviesAPI.TMDB_IMAGE_QUALITY_PATH +movie.getPosterPath());
+        final MovieReview movieReview = mMovieList.get(position);
+        holder.setTexts(movieReview);
 
         holder.mView.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -50,7 +48,7 @@ class MovieRecyclerViewAdapter extends RecyclerView.Adapter<MovieRecyclerViewAda
                 if (null != mListener) {
                     // Notify the active callbacks interface (the activity, if the
                     // fragment is attached to one) that an item has been selected.
-                    mListener.onListFragmentInteraction(movie);
+                    mListener.onItemClicked(movieReview);
                 }
             }
         });
@@ -63,19 +61,21 @@ class MovieRecyclerViewAdapter extends RecyclerView.Adapter<MovieRecyclerViewAda
 
     class ViewHolder extends RecyclerView.ViewHolder {
         final View mView;
-        final ImageView mPoster;
+        final TextView author;
+        final TextView content;
         final Context mContext;
 
         ViewHolder(View view, Context context) {
             super(view);
             mView = view;
-            mPoster = (ImageView) view.findViewById(R.id.movie_poster);
+            author = (TextView) view.findViewById(R.id.review_author);
+            content = (TextView) view.findViewById(R.id.review_content);
             mContext = context;
         }
 
-        void setPosterImage(String imageUrl) {
-            Glide.with(mContext).load(imageUrl)
-                    .into(mPoster);
+        public void setTexts(MovieReview movieReview) {
+            author.setText(movieReview.getAuthor());
+            content.setText(movieReview.getContent());
         }
     }
 }

@@ -1,0 +1,26 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="150dp"
+    android:layout_height="match_parent"
+    android:orientation="vertical"
+    android:background="?attr/selectableItemBackground"
+    android:layout_marginBottom="@dimen/activity_vertical_margin"
+    android:layout_marginRight="@dimen/activity_vertical_margin">
+
+    <TextView
+        android:id="@+id/review_author"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        tools:text="By Author"
+        android:textStyle="italic|bold"/>
+
+    <TextView
+        android:id="@+id/review_content"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:ellipsize="end"
+        android:maxLines="6"
+        tools:text="sdffl;fkdsfl; kfksdl fksdfkd 'kfds;'k;l ooooo o yyty ff hj ijksosko jdojodj ofjfl;j l;foiopio jok fopjfoph ihfikfhk ohfiofh i nkh ffuh jfkj"/>
+</LinearLayout>

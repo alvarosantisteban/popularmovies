@@ -1,0 +1,29 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    android:orientation="vertical"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent">
+
+    <ImageView
+        android:id="@+id/separator_line"
+        android:layout_height="1dp"
+        android:layout_width="match_parent"
+        android:background="@color/black"
+        android:layout_marginTop="8dp" />
+
+    <TextView
+        android:id="@+id/detail_label"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:text="@string/detail_movie_trailers_label"
+        android:textStyle="bold"
+        android:textSize="@dimen/big_font_size"
+        android:layout_marginTop="8dp"/>
+
+    <android.support.v7.widget.RecyclerView
+        android:id="@+id/detail_rv"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="8dp"/>
+</LinearLayout>

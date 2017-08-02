@@ -1,0 +1,46 @@
+<?xml version="1.0" encoding="utf-8"?>
+<android.support.constraint.ConstraintLayout
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:background="?attr/selectableItemBackground">
+
+    <ImageView
+        android:id="@+id/imageView"
+        android:layout_width="80dp"
+        android:layout_height="80dp"
+        app:srcCompat="@android:drawable/ic_media_play"
+        android:tint="@color/black"
+        app:layout_constraintTop_toTopOf="parent"
+        app:layout_constraintLeft_toLeftOf="parent"
+        android:layout_marginTop="8dp"
+        android:layout_marginLeft="8dp"
+        android:layout_marginStart="8dp" />
+
+    <ImageView
+        android:id="@+id/divider"
+        android:layout_width="752dp"
+        android:layout_height="1dp"
+        app:layout_constraintTop_toBottomOf="@+id/imageView"
+        app:layout_constraintBottom_toTopOf="@+id/imageView"
+        app:layout_constraintLeft_toRightOf="@+id/imageView" />
+
+    <TextView
+        android:id="@+id/trailer_title"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        tools:text="Title"
+        app:layout_constraintBottom_toTopOf="@+id/divider"
+        app:layout_constraintLeft_toRightOf="@+id/imageView" />
+
+    <TextView
+        android:id="@+id/trailer_site"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        tools:text="Type"
+        app:layout_constraintTop_toBottomOf="@+id/divider"
+        app:layout_constraintLeft_toRightOf="@+id/imageView" />
+
+</android.support.constraint.ConstraintLayout>
