@@ -15,7 +15,7 @@
     <!-- Detail site -->
     <dimen name="detail_poster_height">250dp</dimen>
     <dimen name="detail_background_table_height">85dp</dimen>
-    <dimen name="detail_left_padding">30dp</dimen>
-    <dimen name="detail_right_padding">16dp</dimen>
+    <dimen name="detail_left_margin">30dp</dimen>
+    <dimen name="detail_right_margin">16dp</dimen>
     <dimen name="detail_margin_between_elements">16dp</dimen>
 </resources>
