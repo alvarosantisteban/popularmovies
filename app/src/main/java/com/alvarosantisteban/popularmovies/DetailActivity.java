@@ -1,6 +1,7 @@
 package com.alvarosantisteban.popularmovies;
 
 import android.os.Bundle;
+import android.support.annotation.NonNull;
 import android.support.v7.app.AppCompatActivity;
 import android.widget.ImageView;
 import android.widget.TextView;
@@ -50,7 +51,7 @@ public class DetailActivity extends AppCompatActivity {
             title.setText(movie.getOriginalTitle());
             description.setText(movie.getOverview());
             usersRating.setText(getString(R.string.film_vote, movie.getVoteAverage()));
-            releaseDate.setText(getString(R.string.film_release_date, movie.getReleaseDate()));
+            releaseDate.setText(extractYear(movie.getReleaseDate()));
         }
     }
 
@@ -94,5 +95,13 @@ public class DetailActivity extends AppCompatActivity {
     public void onDestroy() {
         super.onDestroy();
         OttoBus.getInstance().unregister(this);
+    }
+
+    @NonNull
+    private static String extractYear(@NonNull String date) {
+        if(date.contains("-")) {
+            return date.substring(0, date.indexOf("-"));
+        }
+        return date;
     }
 }

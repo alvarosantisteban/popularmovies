@@ -5,9 +5,17 @@
     <dimen name="text_margin">16dp</dimen>
 
     <!-- Font sizes -->
+    <dimen name="huge_font_size">30sp</dimen>
     <dimen name="big_font_size">20sp</dimen>
     <dimen name="intermediate_font_size">15sp</dimen>
     <dimen name="small_font_size">12sp</dimen>
 
     <integer name="num_columns">2</integer>
+
+    <!-- Detail site -->
+    <dimen name="detail_poster_height">250dp</dimen>
+    <dimen name="detail_background_table_height">85dp</dimen>
+    <dimen name="detail_left_padding">30dp</dimen>
+    <dimen name="detail_right_padding">16dp</dimen>
+    <dimen name="detail_margin_between_elements">16dp</dimen>
 </resources>

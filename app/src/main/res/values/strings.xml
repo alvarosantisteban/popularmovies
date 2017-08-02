@@ -1,10 +1,11 @@
 <resources>
     <string name="app_name">Popular Movies</string>
     <string name="order">Sorting order</string>
-    <string name="film_vote">Average vote: %.1f</string>
-    <string name="film_release_date">Released: %s</string>
+    <string name="film_vote">%.1f / 10</string>
     <string name="error_no_internet_connection">You have no internet connection</string>
     <string name="error_data_null">Data can not be displayed</string>
+
+    <string name="detail_fav_button">Mark as\nfavourite</string>
 
     <string-array name="sort_order">
         <item>Most popular</item>
