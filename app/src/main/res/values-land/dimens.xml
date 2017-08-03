@@ -1,3 +1,5 @@
 <resources>
+    <bool name="isLandscape">true</bool>
+
     <integer name="num_columns">3</integer>
 </resources>

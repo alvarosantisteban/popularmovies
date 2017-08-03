@@ -5,6 +5,7 @@ import android.support.v7.widget.RecyclerView;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.LinearLayout;
 import android.widget.TextView;
 
 import com.alvarosantisteban.popularmovies.model.MovieTrailer;
@@ -31,6 +32,10 @@ class MovieTrailerRVAdapter extends RecyclerView.Adapter<MovieTrailerRVAdapter.V
     public ViewHolder onCreateViewHolder(ViewGroup parent, int viewType) {
         View view = LayoutInflater.from(parent.getContext())
                 .inflate(R.layout.movie_trailer_item, parent, false);
+        LinearLayout.LayoutParams params = new LinearLayout.LayoutParams(Utils.isTabletOrLandscape(mContext) ?
+                LinearLayout.LayoutParams.WRAP_CONTENT : LinearLayout.LayoutParams.MATCH_PARENT,
+                LinearLayout.LayoutParams.WRAP_CONTENT);
+        view.setLayoutParams(params);
         return new ViewHolder(view, mContext);
     }
 

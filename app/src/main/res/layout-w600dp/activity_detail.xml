@@ -94,5 +94,25 @@
             app:layout_constraintRight_toRightOf="parent"
             app:layout_constraintLeft_toLeftOf="@+id/detail_movie_fav_button" />
 
+        <include layout="@layout/detail_rv_section"
+            android:id="@+id/trailer_section"
+            android:layout_height="wrap_content"
+            android:layout_width="0dp"
+            android:layout_marginTop="8dp"
+            app:layout_constraintTop_toBottomOf="@+id/detail_movie_poster"
+            app:layout_constraintLeft_toLeftOf="@+id/detail_movie_poster"
+            app:layout_constraintRight_toRightOf="@+id/detail_movie_description"
+            android:layout_marginLeft="8dp" />
+
+
+        <include layout="@layout/detail_rv_section"
+            android:id="@+id/reviews_section"
+            android:layout_height="wrap_content"
+            android:layout_width="0dp"
+            android:layout_marginTop="8dp"
+            app:layout_constraintTop_toBottomOf="@+id/trailer_section"
+            app:layout_constraintLeft_toLeftOf="@+id/trailer_section"
+            app:layout_constraintRight_toRightOf="@+id/trailer_section" />
+
     </android.support.constraint.ConstraintLayout>
 </ScrollView>

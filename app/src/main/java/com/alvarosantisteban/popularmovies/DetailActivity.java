@@ -3,7 +3,6 @@ package com.alvarosantisteban.popularmovies;
 import android.content.Intent;
 import android.net.Uri;
 import android.os.Bundle;
-import android.support.annotation.NonNull;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
@@ -59,7 +58,7 @@ public class DetailActivity extends AppCompatActivity implements OnListInteracti
         trailersRv = (RecyclerView) trailersSection.findViewById(R.id.detail_rv);
         reviewsRv = (RecyclerView) reviewsSection.findViewById(R.id.detail_rv);
 
-        trailersRv.setLayoutManager(new LinearLayoutManager(this, LinearLayoutManager.VERTICAL, false));
+        trailersRv.setLayoutManager(new LinearLayoutManager(this, Utils.isTabletOrLandscape(this) ? LinearLayoutManager.HORIZONTAL : LinearLayoutManager.VERTICAL, false));
         reviewsRv.setLayoutManager(new LinearLayoutManager(this, LinearLayoutManager.HORIZONTAL, false));
 
         TextView reviewsLabel = (TextView) reviewsSection.findViewById(R.id.detail_label);
@@ -76,7 +75,7 @@ public class DetailActivity extends AppCompatActivity implements OnListInteracti
             title.setText(movie.getOriginalTitle());
             description.setText(movie.getOverview());
             usersRating.setText(getString(R.string.film_vote, movie.getVoteAverage()));
-            releaseDate.setText(extractYear(movie.getReleaseDate()));
+            releaseDate.setText(Utils.extractYear(movie.getReleaseDate()));
         }
     }
 
@@ -136,13 +135,5 @@ public class DetailActivity extends AppCompatActivity implements OnListInteracti
     @Override
     public void onItemClicked(MovieTrailer movieTrailer) {
         startActivity(new Intent(Intent.ACTION_VIEW, Uri.parse("http://www.youtube.com/watch?v=" +movieTrailer.getKey())));
-    }
-
-    @NonNull
-    private static String extractYear(@NonNull String date) {
-        if(date.contains("-")) {
-            return date.substring(0, date.indexOf("-"));
-        }
-        return date;
     }
 }

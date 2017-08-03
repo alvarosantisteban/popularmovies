@@ -1,4 +1,6 @@
 <resources>
+    <bool name="isTablet">true</bool>
+
     <!-- Detail site -->
     <dimen name="detail_poster_height">500dp</dimen>
 </resources>
