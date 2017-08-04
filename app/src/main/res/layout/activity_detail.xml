@@ -76,12 +76,12 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:textSize="@dimen/small_font_size"
-            style="?android:attr/borderlessButtonStyle"
-            android:background="@color/colorPrimaryLight"
+            android:background="@drawable/button_ripple"
             android:text="@string/detail_fav_button"
             app:layout_constraintLeft_toLeftOf="@+id/detail_movie_rating"
             android:layout_marginTop="@dimen/detail_margin_between_elements"
-            app:layout_constraintTop_toBottomOf="@+id/detail_movie_rating" />
+            app:layout_constraintTop_toBottomOf="@+id/detail_movie_rating"
+            android:onClick="onFavButtonClicked"/>
 
         <TextView
             android:id="@+id/detail_movie_description"
