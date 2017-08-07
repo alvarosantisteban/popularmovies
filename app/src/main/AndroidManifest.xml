@@ -26,6 +26,11 @@
                 android:name="android.support.PARENT_ACTIVITY"
                 android:value="com.alvarosantisteban.popularmovies.MainActivity"/>
         </activity>
+        
+        <provider
+            android:authorities="com.alvarosantisteban.popularmovies"
+            android:name=".data.MoviesContentProvider"
+            android:exported="false"/>
     </application>
 
 </manifest>

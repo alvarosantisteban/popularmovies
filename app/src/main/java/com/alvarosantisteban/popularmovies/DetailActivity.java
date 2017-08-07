@@ -3,7 +3,6 @@ package com.alvarosantisteban.popularmovies;
 import android.content.ContentValues;
 import android.content.Intent;
 import android.database.Cursor;
-import android.database.sqlite.SQLiteDatabase;
 import android.net.Uri;
 import android.os.Bundle;
 import android.support.v7.app.AppCompatActivity;
@@ -18,7 +17,6 @@ import android.widget.TextView;
 import com.alvarosantisteban.popularmovies.api.MoviesAPI;
 import com.alvarosantisteban.popularmovies.api.RetrofitResultEvent;
 import com.alvarosantisteban.popularmovies.data.MoviesContract;
-import com.alvarosantisteban.popularmovies.data.MoviesDbHelper;
 import com.alvarosantisteban.popularmovies.model.BaseMovieContainer;
 import com.alvarosantisteban.popularmovies.model.Movie;
 import com.alvarosantisteban.popularmovies.model.MovieReview;
@@ -41,7 +39,6 @@ public class DetailActivity extends AppCompatActivity implements OnListInteracti
 
     private Movie movie;
     private boolean isFav;
-    MoviesDbHelper dbHelper;
 
     private LinearLayout trailersSection;
     private LinearLayout reviewsSection;
@@ -75,8 +72,6 @@ public class DetailActivity extends AppCompatActivity implements OnListInteracti
 
         TextView reviewsLabel = (TextView) reviewsSection.findViewById(R.id.detail_label);
         reviewsLabel.setText(R.string.detail_movie_reviews_label);
-
-        dbHelper = new MoviesDbHelper(this);
 
         if (movie != null) {
             // Set the title of the activity
@@ -178,34 +173,22 @@ public class DetailActivity extends AppCompatActivity implements OnListInteracti
 
     // FIXME Do in background
     private Cursor getMovieInfo() {
-        SQLiteDatabase db = dbHelper.getReadableDatabase();
-        String selection = MoviesContract.Movie.COLUMN_NAME_MOVIE_ID + " = ?";
-        String[] selectionArgs = {String.valueOf(movie.getId())};
-        return db.query(MoviesContract.Movie.TABLE_NAME,
-                null,
-                selection,
-                selectionArgs,
-                null,
-                null,
-                null);
+        Uri uriToQuery = MoviesContract.Movie.CONTENT_URI.buildUpon().appendPath(String.valueOf(movie.getId())).build();
+        return getContentResolver().query(uriToQuery, null, null, null, null, null);
     }
 
     // FIXME Do in background
     private void addMovieToDB() {
-        SQLiteDatabase db = dbHelper.getWritableDatabase();
         ContentValues contentValues = new ContentValues();
         contentValues.put(MoviesContract.Movie.COLUMN_NAME_MOVIE_ID, movie.getId());
         contentValues.put(MoviesContract.Movie.COLUMN_NAME_TITLE, movie.getOriginalTitle());
-        db.insert(MoviesContract.Movie.TABLE_NAME, null, contentValues);
-        db.close();
+
+        getContentResolver().insert(MoviesContract.Movie.CONTENT_URI, contentValues);
     }
 
     // FIXME Do in background
     private void removeMovieFromDB() {
-        SQLiteDatabase db = dbHelper.getWritableDatabase();
-        String selection = MoviesContract.Movie.COLUMN_NAME_MOVIE_ID + " = ?";
-        String[] selectionArgs = {String.valueOf(movie.getId())};
-        db.delete(MoviesContract.Movie.TABLE_NAME, selection, selectionArgs);
-        db.close();
+        Uri uriToDelete = MoviesContract.Movie.CONTENT_URI.buildUpon().appendPath(String.valueOf(movie.getId())).build();
+        getContentResolver().delete(uriToDelete, null, null);
     }
 }
