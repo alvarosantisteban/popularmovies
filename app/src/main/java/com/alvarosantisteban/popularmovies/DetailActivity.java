@@ -4,6 +4,7 @@ import android.content.ContentValues;
 import android.content.Intent;
 import android.database.Cursor;
 import android.net.Uri;
+import android.os.AsyncTask;
 import android.os.Bundle;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.LinearLayoutManager;
@@ -36,6 +37,10 @@ import static com.alvarosantisteban.popularmovies.MainActivity.EXTRA_MOVIE;
 public class DetailActivity extends AppCompatActivity implements OnListInteractionListener {
 
     private static final String TAG = DetailActivity.class.getSimpleName();
+
+    private static final int ADD_MOVIE = 1;
+    private static final int REMOVE_MOVIE = 2;
+    private static final int GET_MOVIE_INFO = 3;
 
     private Movie movie;
     private boolean isFav;
@@ -86,8 +91,8 @@ public class DetailActivity extends AppCompatActivity implements OnListInteracti
             usersRating.setText(getString(R.string.film_vote, movie.getVoteAverage()));
             releaseDate.setText(Utils.extractYear(movie.getReleaseDate()));
 
-            isFav = isMovieFav();
-            toggleButtonText(isFav);
+            // Start an AsyncTask to check in the DB if the movie is marked as favourite
+            new OperateWithDBMovieAsyncTask().execute(GET_MOVIE_INFO);
         }
     }
 
@@ -155,40 +160,56 @@ public class DetailActivity extends AppCompatActivity implements OnListInteracti
         toggleButtonText(isFav);
         
         // Update DB
-        if(isFav) {
-            addMovieToDB();
-        } else {
-            removeMovieFromDB();
-        }
+        new OperateWithDBMovieAsyncTask().execute(isFav ? ADD_MOVIE : REMOVE_MOVIE);
     }
 
     public void toggleButtonText(boolean isFav) {
         favButton.setText(isFav ? R.string.detail_unfav_button : R.string.detail_fav_button);
     }
 
-    private boolean isMovieFav() {
-        Cursor cursor = getMovieInfo();
-        return cursor.getCount() > 0;
-    }
+    /**
+     * Helper class to do operations with the content provider in an asynchronous thread.
+     */
+    private class OperateWithDBMovieAsyncTask extends AsyncTask <Integer, Void, Cursor> {
 
-    // FIXME Do in background
-    private Cursor getMovieInfo() {
-        Uri uriToQuery = MoviesContract.Movie.CONTENT_URI.buildUpon().appendPath(String.valueOf(movie.getId())).build();
-        return getContentResolver().query(uriToQuery, null, null, null, null, null);
-    }
+        @Override
+        protected Cursor doInBackground(Integer... operationToBeDone) {
+            switch (operationToBeDone[0]) {
+                case ADD_MOVIE:
+                    addMovieToDB();
+                    return null;
+                case REMOVE_MOVIE:
+                    removeMovieFromDB();
+                    return null;
+                case GET_MOVIE_INFO:
+                    Uri uriToQuery = MoviesContract.Movie.CONTENT_URI.buildUpon().appendPath(String.valueOf(movie.getId())).build();
+                    return getContentResolver().query(uriToQuery, null, null, null, null, null);
+            }
+            return null;
+        }
 
-    // FIXME Do in background
-    private void addMovieToDB() {
-        ContentValues contentValues = new ContentValues();
-        contentValues.put(MoviesContract.Movie.COLUMN_NAME_MOVIE_ID, movie.getId());
-        contentValues.put(MoviesContract.Movie.COLUMN_NAME_TITLE, movie.getOriginalTitle());
+        @Override
+        protected void onPostExecute(Cursor cursor) {
+            super.onPostExecute(cursor);
 
-        getContentResolver().insert(MoviesContract.Movie.CONTENT_URI, contentValues);
-    }
+            // Modify the favourite state only if that was the wanted operation
+            if(cursor != null) {
+                isFav = cursor.getCount() > 0;
+                toggleButtonText(isFav);
+            }
+        }
 
-    // FIXME Do in background
-    private void removeMovieFromDB() {
-        Uri uriToDelete = MoviesContract.Movie.CONTENT_URI.buildUpon().appendPath(String.valueOf(movie.getId())).build();
-        getContentResolver().delete(uriToDelete, null, null);
+        private void addMovieToDB() {
+            ContentValues contentValues = new ContentValues();
+            contentValues.put(MoviesContract.Movie.COLUMN_NAME_MOVIE_ID, movie.getId());
+            contentValues.put(MoviesContract.Movie.COLUMN_NAME_TITLE, movie.getOriginalTitle());
+
+            getContentResolver().insert(MoviesContract.Movie.CONTENT_URI, contentValues);
+        }
+
+        private void removeMovieFromDB() {
+            Uri uriToDelete = MoviesContract.Movie.CONTENT_URI.buildUpon().appendPath(String.valueOf(movie.getId())).build();
+            getContentResolver().delete(uriToDelete, null, null);
+        }
     }
 }
