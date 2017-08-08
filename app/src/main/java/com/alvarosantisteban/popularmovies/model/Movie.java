@@ -41,6 +41,21 @@ public class Movie implements Parcelable{
 
     }
 
+    public Movie(long id, String title, String posterPath, String overview, String releaseDate, double voteAverage) {
+        this.id = id;
+        this.originalTitle = title;
+        this.originalLanguage = null;
+        this.posterPath = posterPath;
+        this.adult = false;
+        this.overview = overview;
+        this.releaseDate = releaseDate;
+        this.popularity = 0.0;
+        this.voteCount = 0;
+        this.video = false;
+        this.voteAverage = voteAverage;
+
+    }
+
     @JsonCreator
     public static Movie from(
             @JsonProperty("id") long id,

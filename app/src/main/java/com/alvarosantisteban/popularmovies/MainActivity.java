@@ -21,6 +21,7 @@ public class MainActivity extends AppCompatActivity implements MoviesFragment.On
 
     public static final int POS_MOST_POPULAR = 0;
     public static final int POS_TOP_RATED = 1;
+    public static final int POS_FAVOURITES = 2;
     protected static final String EXTRA_MOVIE = "ExtraMovie";
 
     // Used to distinguish between real user touches and automatic calls on onItemSelected
@@ -72,7 +73,13 @@ public class MainActivity extends AppCompatActivity implements MoviesFragment.On
 
         MoviesFragment fragment = (MoviesFragment) getSupportFragmentManager().findFragmentById(R.id.movies_fragment);
         if(fragment != null) {
-            fragment.downloadMoviesSortedBy(position);
+            switch (position) {
+                case POS_FAVOURITES:
+                    fragment.askForFavourites();
+                    break;
+                default:
+                    fragment.downloadMoviesSortedBy(position);
+            }
         }
     }
 
@@ -80,4 +87,10 @@ public class MainActivity extends AppCompatActivity implements MoviesFragment.On
     public void onNothingSelected(AdapterView<?> parent) {
         // Do nothing
     }
+
+    // FIXME (1) Save the state of the spinner
+
+    // FIXME (2) Display loading bar
+
+    // FIXME (3) Notify adapter if a favourite was created/removed
 }

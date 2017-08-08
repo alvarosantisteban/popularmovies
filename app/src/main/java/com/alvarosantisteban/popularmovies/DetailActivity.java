@@ -203,6 +203,10 @@ public class DetailActivity extends AppCompatActivity implements OnListInteracti
             ContentValues contentValues = new ContentValues();
             contentValues.put(MoviesContract.Movie.COLUMN_NAME_MOVIE_ID, movie.getId());
             contentValues.put(MoviesContract.Movie.COLUMN_NAME_TITLE, movie.getOriginalTitle());
+            contentValues.put(MoviesContract.Movie.COLUMN_NAME_POSTER_PATH, movie.getPosterPath());
+            contentValues.put(MoviesContract.Movie.COLUMN_NAME_OVERVIEW, movie.getOverview());
+            contentValues.put(MoviesContract.Movie.COLUMN_NAME_RELEASE_DATE, movie.getReleaseDate());
+            contentValues.put(MoviesContract.Movie.COLUMN_NAME_VOTE_AVERAGE, movie.getVoteAverage());
 
             getContentResolver().insert(MoviesContract.Movie.CONTENT_URI, contentValues);
         }
