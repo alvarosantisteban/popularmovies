@@ -13,6 +13,7 @@ import android.view.View;
 import android.widget.Button;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
+import android.widget.ProgressBar;
 import android.widget.TextView;
 
 import com.alvarosantisteban.popularmovies.api.MoviesAPI;
@@ -49,6 +50,8 @@ public class DetailActivity extends AppCompatActivity implements OnListInteracti
     private LinearLayout reviewsSection;
     private RecyclerView trailersRv;
     private RecyclerView reviewsRv;
+    private ProgressBar reviewsProgressBar;
+    private ProgressBar trailersProgressBar;
     private Button favButton;
 
     @Override
@@ -71,6 +74,8 @@ public class DetailActivity extends AppCompatActivity implements OnListInteracti
         reviewsSection = (LinearLayout) findViewById(R.id.reviews_section);
         trailersRv = (RecyclerView) trailersSection.findViewById(R.id.detail_rv);
         reviewsRv = (RecyclerView) reviewsSection.findViewById(R.id.detail_rv);
+        reviewsProgressBar = (ProgressBar) reviewsSection.findViewById(R.id.progressBar);
+        trailersProgressBar = (ProgressBar) trailersSection.findViewById(R.id.progressBar);
 
         trailersRv.setLayoutManager(new LinearLayoutManager(this, Utils.isTabletOrLandscape(this) ? LinearLayoutManager.HORIZONTAL : LinearLayoutManager.VERTICAL, false));
         reviewsRv.setLayoutManager(new LinearLayoutManager(this, LinearLayoutManager.HORIZONTAL, false));
@@ -102,11 +107,13 @@ public class DetailActivity extends AppCompatActivity implements OnListInteracti
     }
 
     private void requestTrailersForMovie(long movieId) {
+        showTrailersProgressBar();
         MovieTrailerController controller = new MovieTrailerController();
         controller.start(String.valueOf(movieId));
     }
 
     private void requestReviewsForMovie(long movieId) {
+        showReviewsProgressBar();
         MovieReviewController controller = new MovieReviewController();
         controller.start(String.valueOf(movieId));
     }
@@ -119,6 +126,8 @@ public class DetailActivity extends AppCompatActivity implements OnListInteracti
             MovieReviewContainer movieReviewContainer = (MovieReviewContainer) container;
 
             if (movieReviewContainer.getMovieReviews().size() > 0) {
+                hideReviewsProgressBar();
+
                 // Set the reviews in the recyclerview
                 reviewsRv.setAdapter(new MovieReviewRVAdapter(movieReviewContainer.getMovieReviews(), this, this));
             } else {
@@ -129,6 +138,8 @@ public class DetailActivity extends AppCompatActivity implements OnListInteracti
             MovieTrailerContainer movieTrailerContainer = (MovieTrailerContainer) container;
 
             if (movieTrailerContainer.getMovieTrailers().size() > 0) {
+                hideTrailersProgressBar();
+                
                 // Set the trailers in the recyclerview
                 trailersRv.setAdapter(new MovieTrailerRVAdapter(movieTrailerContainer.getMovieTrailers(), this, this));
             } else {
@@ -165,6 +176,26 @@ public class DetailActivity extends AppCompatActivity implements OnListInteracti
 
     public void toggleButtonText(boolean isFav) {
         favButton.setText(isFav ? R.string.detail_unfav_button : R.string.detail_fav_button);
+    }
+
+    private void showTrailersProgressBar() {
+        trailersProgressBar.setVisibility(View.VISIBLE);
+        trailersRv.setVisibility(View.GONE);
+    }
+
+    private void hideTrailersProgressBar() {
+        trailersProgressBar.setVisibility(View.GONE);
+        trailersRv.setVisibility(View.VISIBLE);
+    }
+
+    private void showReviewsProgressBar() {
+        reviewsProgressBar.setVisibility(View.VISIBLE);
+        reviewsRv.setVisibility(View.GONE);
+    }
+
+    private void hideReviewsProgressBar() {
+        reviewsProgressBar.setVisibility(View.GONE);
+        reviewsRv.setVisibility(View.VISIBLE);
     }
 
     /**

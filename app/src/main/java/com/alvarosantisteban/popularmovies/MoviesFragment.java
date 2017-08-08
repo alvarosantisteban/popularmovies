@@ -12,6 +12,7 @@ import android.support.v7.widget.RecyclerView;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.ProgressBar;
 import android.widget.Toast;
 
 import com.alvarosantisteban.popularmovies.api.RetrofitResultEvent;
@@ -37,6 +38,7 @@ public class MoviesFragment extends Fragment {
 
     private OnListFragmentInteractionListener mListener;
     private RecyclerView mRecyclerView;
+    private ProgressBar progressBar;
 
     /**
      * Mandatory empty constructor for the fragment manager to instantiate the
@@ -51,11 +53,10 @@ public class MoviesFragment extends Fragment {
         View view = inflater.inflate(R.layout.fragment_movie_list, container, false);
 
         // Set the adapter
-        if (view instanceof RecyclerView) {
-            Context context = view.getContext();
-            mRecyclerView = (RecyclerView) view;
-            mRecyclerView.setLayoutManager(new GridLayoutManager(context, getResources().getInteger(R.integer.num_columns)));
-        }
+        Context context = view.getContext();
+        progressBar = (ProgressBar) view.findViewById(R.id.progressBar);
+        mRecyclerView = (RecyclerView) view.findViewById(R.id.list);
+        mRecyclerView.setLayoutManager(new GridLayoutManager(context, getResources().getInteger(R.integer.num_columns)));
 
         OttoBus.getInstance().register(this);
 
@@ -64,6 +65,8 @@ public class MoviesFragment extends Fragment {
 
     protected void downloadMoviesSortedBy(int endPoint) {
         if (isNetworkAvailable()) {
+            showProgressBar();
+
             Controller controller = new Controller();
             controller.start(endPoint);
         }else {
@@ -72,6 +75,8 @@ public class MoviesFragment extends Fragment {
     }
 
     protected void askForFavourites() {
+        showProgressBar();
+
         new GetAllFavouriteMoviesAsyncTask().execute();
     }
 
@@ -86,6 +91,8 @@ public class MoviesFragment extends Fragment {
     @Subscribe
     public void onAsyncTaskResult(RetrofitResultEvent event) throws IOException {
         if(event.getMovieContainer() instanceof MovieContainer) {
+            hideProgressBar();
+
             MovieContainer movieContainer = (MovieContainer) event.getMovieContainer();
             // Set the movies in the adapter
             mRecyclerView.setAdapter(new MovieRVAdapter(movieContainer.getMovies(), mListener, getActivity()));
@@ -108,6 +115,16 @@ public class MoviesFragment extends Fragment {
         super.onDetach();
         mListener = null;
         OttoBus.getInstance().unregister(this);
+    }
+
+    private void showProgressBar() {
+        progressBar.setVisibility(View.VISIBLE);
+        mRecyclerView.setVisibility(View.GONE);
+    }
+
+    private void hideProgressBar() {
+        progressBar.setVisibility(View.GONE);
+        mRecyclerView.setVisibility(View.VISIBLE);
     }
 
     /**
@@ -146,6 +163,8 @@ public class MoviesFragment extends Fragment {
             }finally {
                 cursor.close();
             }
+            hideProgressBar();
+
             mRecyclerView.setAdapter(new MovieRVAdapter(moviesInDB, mListener, getActivity()));
         }
     }

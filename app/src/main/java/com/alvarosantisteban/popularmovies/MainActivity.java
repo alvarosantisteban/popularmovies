@@ -107,7 +107,5 @@ public class MainActivity extends AppCompatActivity implements MoviesFragment.On
         // Do nothing
     }
 
-    // FIXME (2) Display loading bar
-
     // FIXME (3) Notify adapter if a favourite was created/removed
 }
