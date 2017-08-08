@@ -23,14 +23,27 @@ public class MainActivity extends AppCompatActivity implements MoviesFragment.On
     public static final int POS_TOP_RATED = 1;
     public static final int POS_FAVOURITES = 2;
     protected static final String EXTRA_MOVIE = "ExtraMovie";
+    private static final String SPINNER_POS = "spinnerPos";
 
     // Used to distinguish between real user touches and automatic calls on onItemSelected
     private boolean hasUserTouchedSpinner = false;
+
+    private Spinner spinner;
+    private int spinnerPos = POS_MOST_POPULAR;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
+
+        if (savedInstanceState != null) {
+            spinnerPos = savedInstanceState.getInt(SPINNER_POS, POS_MOST_POPULAR);
+        }
+    }
+    @Override
+    protected void onSaveInstanceState(Bundle outState) {
+        super.onSaveInstanceState(outState);
+        outState.putInt(SPINNER_POS, spinner.getSelectedItemPosition());
     }
 
     @Override
@@ -45,13 +58,14 @@ public class MainActivity extends AppCompatActivity implements MoviesFragment.On
         getMenuInflater().inflate(R.menu.main_menu, menu);
 
         MenuItem item = menu.findItem(R.id.spinner);
-        Spinner spinner = (Spinner) MenuItemCompat.getActionView(item);
+        spinner = (Spinner) MenuItemCompat.getActionView(item);
 
         ArrayAdapter<CharSequence> adapter = ArrayAdapter.createFromResource(this,
                 R.array.sort_order, android.R.layout.simple_spinner_item);
         adapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
 
         spinner.setAdapter(adapter);
+        spinner.setSelection(spinnerPos);
         spinner.setOnItemSelectedListener(this);
         spinner.setOnTouchListener(new View.OnTouchListener() {
             @Override
@@ -60,6 +74,7 @@ public class MainActivity extends AppCompatActivity implements MoviesFragment.On
                 return false;
             }
         });
+        filterBySpinnerPos(spinnerPos);
         return true;
     }
 
@@ -71,6 +86,10 @@ public class MainActivity extends AppCompatActivity implements MoviesFragment.On
 
         hasUserTouchedSpinner = false;
 
+        filterBySpinnerPos(position);
+    }
+
+    private void filterBySpinnerPos(int position) {
         MoviesFragment fragment = (MoviesFragment) getSupportFragmentManager().findFragmentById(R.id.movies_fragment);
         if(fragment != null) {
             switch (position) {
@@ -87,8 +106,6 @@ public class MainActivity extends AppCompatActivity implements MoviesFragment.On
     public void onNothingSelected(AdapterView<?> parent) {
         // Do nothing
     }
-
-    // FIXME (1) Save the state of the spinner
 
     // FIXME (2) Display loading bar
 

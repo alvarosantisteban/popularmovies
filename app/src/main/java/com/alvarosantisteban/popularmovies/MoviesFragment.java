@@ -24,8 +24,6 @@ import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
 
-import static com.alvarosantisteban.popularmovies.MainActivity.POS_MOST_POPULAR;
-
 /**
  * A fragment representing a list of movies in two columns.
  */
@@ -60,8 +58,6 @@ public class MoviesFragment extends Fragment {
         }
 
         OttoBus.getInstance().register(this);
-
-        downloadMoviesSortedBy(POS_MOST_POPULAR);
 
         return view;
     }
