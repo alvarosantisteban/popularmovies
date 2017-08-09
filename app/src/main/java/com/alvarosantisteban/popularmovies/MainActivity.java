@@ -106,6 +106,4 @@ public class MainActivity extends AppCompatActivity implements MoviesFragment.On
     public void onNothingSelected(AdapterView<?> parent) {
         // Do nothing
     }
-
-    // FIXME (3) Notify adapter if a favourite was created/removed
 }

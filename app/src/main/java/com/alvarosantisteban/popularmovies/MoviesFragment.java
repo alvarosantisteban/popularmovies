@@ -39,6 +39,7 @@ public class MoviesFragment extends Fragment {
     private OnListFragmentInteractionListener mListener;
     private RecyclerView mRecyclerView;
     private ProgressBar progressBar;
+    private boolean isDisplayingFavourites;
 
     /**
      * Mandatory empty constructor for the fragment manager to instantiate the
@@ -64,6 +65,7 @@ public class MoviesFragment extends Fragment {
     }
 
     protected void downloadMoviesSortedBy(int endPoint) {
+        isDisplayingFavourites = false;
         if (isNetworkAvailable()) {
             showProgressBar();
 
@@ -75,6 +77,7 @@ public class MoviesFragment extends Fragment {
     }
 
     protected void askForFavourites() {
+        isDisplayingFavourites = true;
         showProgressBar();
 
         new GetAllFavouriteMoviesAsyncTask().execute();
@@ -96,6 +99,15 @@ public class MoviesFragment extends Fragment {
             MovieContainer movieContainer = (MovieContainer) event.getMovieContainer();
             // Set the movies in the adapter
             mRecyclerView.setAdapter(new MovieRVAdapter(movieContainer.getMovies(), mListener, getActivity()));
+        }
+    }
+
+    @SuppressWarnings("unused") // Used to receive results from Otto bus
+    @Subscribe
+    public void onFavouriteDeleted(DetailActivity.FavouriteDeletedEvent event) throws IOException {
+        // If the filter is Favourites, then we need to refresh the results because a favourite got deleted
+        if (isDisplayingFavourites) {
+            askForFavourites();
         }
     }
 

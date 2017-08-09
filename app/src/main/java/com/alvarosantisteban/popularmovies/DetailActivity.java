@@ -139,7 +139,7 @@ public class DetailActivity extends AppCompatActivity implements OnListInteracti
 
             if (movieTrailerContainer.getMovieTrailers().size() > 0) {
                 hideTrailersProgressBar();
-                
+
                 // Set the trailers in the recyclerview
                 trailersRv.setAdapter(new MovieTrailerRVAdapter(movieTrailerContainer.getMovieTrailers(), this, this));
             } else {
@@ -203,9 +203,12 @@ public class DetailActivity extends AppCompatActivity implements OnListInteracti
      */
     private class OperateWithDBMovieAsyncTask extends AsyncTask <Integer, Void, Cursor> {
 
+        private int dbOperation;
+
         @Override
         protected Cursor doInBackground(Integer... operationToBeDone) {
-            switch (operationToBeDone[0]) {
+            dbOperation = operationToBeDone[0];
+            switch (dbOperation) {
                 case ADD_MOVIE:
                     addMovieToDB();
                     return null;
@@ -223,10 +226,15 @@ public class DetailActivity extends AppCompatActivity implements OnListInteracti
         protected void onPostExecute(Cursor cursor) {
             super.onPostExecute(cursor);
 
-            // Modify the favourite state only if that was the wanted operation
+            // Modify the favourite state only if that was the wanted dbOperation
             if(cursor != null) {
                 isFav = cursor.getCount() > 0;
                 toggleButtonText(isFav);
+            }
+
+            if(dbOperation == REMOVE_MOVIE) {
+                // Inform the main activity that a favourite was removed
+                OttoBus.getInstance().post(new FavouriteDeletedEvent());
             }
         }
 
@@ -247,4 +255,9 @@ public class DetailActivity extends AppCompatActivity implements OnListInteracti
             getContentResolver().delete(uriToDelete, null, null);
         }
     }
+
+    /**
+     * Helper class that encapsulated the event of a movie being removed from the favourites.
+     */
+    class FavouriteDeletedEvent {}
 }
