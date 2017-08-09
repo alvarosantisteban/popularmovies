@@ -1,7 +1,9 @@
 package com.alvarosantisteban.popularmovies;
 
 import android.content.Intent;
+import android.content.SharedPreferences;
 import android.os.Bundle;
+import android.preference.PreferenceManager;
 import android.support.v4.view.MenuItemCompat;
 import android.support.v7.app.AppCompatActivity;
 import android.view.Menu;
@@ -29,21 +31,20 @@ public class MainActivity extends AppCompatActivity implements MoviesFragment.On
     private boolean hasUserTouchedSpinner = false;
 
     private Spinner spinner;
-    private int spinnerPos = POS_MOST_POPULAR;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
-
-        if (savedInstanceState != null) {
-            spinnerPos = savedInstanceState.getInt(SPINNER_POS, POS_MOST_POPULAR);
-        }
     }
+
     @Override
-    protected void onSaveInstanceState(Bundle outState) {
-        super.onSaveInstanceState(outState);
-        outState.putInt(SPINNER_POS, spinner.getSelectedItemPosition());
+    protected void onStop() {
+        super.onStop();
+
+        SharedPreferences.Editor editor = PreferenceManager.getDefaultSharedPreferences(this).edit();
+        editor.putInt(SPINNER_POS, spinner.getSelectedItemPosition());
+        editor.apply();
     }
 
     @Override
@@ -64,6 +65,7 @@ public class MainActivity extends AppCompatActivity implements MoviesFragment.On
                 R.array.sort_order, android.R.layout.simple_spinner_item);
         adapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
 
+        int spinnerPos = PreferenceManager.getDefaultSharedPreferences(this).getInt(SPINNER_POS, POS_MOST_POPULAR);
         spinner.setAdapter(adapter);
         spinner.setSelection(spinnerPos);
         spinner.setOnItemSelectedListener(this);
