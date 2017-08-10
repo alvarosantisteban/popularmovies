@@ -6,6 +6,8 @@ import android.net.ConnectivityManager;
 import android.net.NetworkInfo;
 import android.os.AsyncTask;
 import android.os.Bundle;
+import android.os.Parcelable;
+import android.support.annotation.Nullable;
 import android.support.v4.app.Fragment;
 import android.support.v7.widget.GridLayoutManager;
 import android.support.v7.widget.RecyclerView;
@@ -32,6 +34,10 @@ public class MoviesFragment extends Fragment {
 
     private static final String TAG = MoviesFragment.class.getSimpleName();
 
+    private static final String LIST_STATE_PARCELABLE = "listState";
+    private static final String MOVIE_LIST = "movieList";
+    private static final String LIST_POS = "listPosition";
+
     interface OnListFragmentInteractionListener {
         void onListFragmentInteraction(Movie movie);
     }
@@ -40,12 +46,26 @@ public class MoviesFragment extends Fragment {
     private RecyclerView mRecyclerView;
     private ProgressBar progressBar;
     private boolean isDisplayingFavourites;
+    private Parcelable mListState;
+    private List<Movie> movieList;
+    private int currentPosition;
 
     /**
      * Mandatory empty constructor for the fragment manager to instantiate the
      * fragment (e.g. upon screen orientation changes).
      */
     public MoviesFragment() {
+    }
+
+    @Override
+    public void onAttach(Context context) {
+        super.onAttach(context);
+        if (context instanceof OnListFragmentInteractionListener) {
+            mListener = (OnListFragmentInteractionListener) context;
+        } else {
+            throw new RuntimeException(context.toString()
+                    + " must implement OnListFragmentInteractionListener");
+        }
     }
 
     @Override
@@ -62,6 +82,74 @@ public class MoviesFragment extends Fragment {
         OttoBus.getInstance().register(this);
 
         return view;
+    }
+
+    @Override
+    public void onActivityCreated(@Nullable Bundle savedInstanceState) {
+        super.onActivityCreated(savedInstanceState);
+
+        // Retrieve list's state
+        if(savedInstanceState != null) {
+            hideProgressBar();
+
+            mListState = savedInstanceState.getParcelable(LIST_STATE_PARCELABLE);
+            movieList = savedInstanceState.getParcelableArrayList(MOVIE_LIST);
+
+            mRecyclerView.setAdapter(new MovieRVAdapter(movieList, mListener, getActivity()));
+
+            currentPosition = savedInstanceState.getInt(LIST_POS);
+        }
+    }
+
+    @Override
+    public void onResume() {
+        super.onResume();
+        restoreLayoutManagerPosition(currentPosition);
+    }
+
+    private void restoreLayoutManagerPosition(final int currentVisiblePosition) {
+        if (mListState != null) {
+            // Restore the position (1)
+//            mRecyclerView.getLayoutManager().onRestoreInstanceState(mListState);
+
+            // Restore the position (2)
+             mRecyclerView.getLayoutManager().scrollToPosition(currentVisiblePosition);
+
+            // Restore the position (3)
+//            if (currentPosition!= -1) {
+//                ((LinearLayoutManager) mRecyclerView.getLayoutManager()).scrollToPositionWithOffset(currentPosition, 5);
+//            }
+
+            // Restore the position (4)
+//            mRecyclerView.scrollBy(0, currentVisiblePosition*10);
+        }
+    }
+
+    @Override
+    public void onSaveInstanceState(Bundle outState) {
+        super.onSaveInstanceState(outState);
+
+        // Save list's state
+        mListState = mRecyclerView.getLayoutManager().onSaveInstanceState();
+        outState.putParcelable(LIST_STATE_PARCELABLE, mListState);
+        outState.putParcelableArrayList(MOVIE_LIST, (ArrayList<? extends Parcelable>) movieList);
+
+//        (2)
+        currentPosition = ((GridLayoutManager) mRecyclerView.getLayoutManager()).findFirstCompletelyVisibleItemPosition();
+
+        // (3)
+//        currentPosition= ((GridLayoutManager) mRecyclerView.getLayoutManager()).findFirstVisibleItemPosition();
+//        View startView = mRecyclerView.getChildAt(0);
+//        topView = (startView == null) ? 0 : (startView.getTop() - mRecyclerView.getPaddingTop());
+
+        outState.putInt(LIST_POS, currentPosition);
+    }
+
+    @Override
+    public void onDetach() {
+        super.onDetach();
+        mListener = null;
+        OttoBus.getInstance().unregister(this);
     }
 
     protected void downloadMoviesSortedBy(int endPoint) {
@@ -90,15 +178,25 @@ public class MoviesFragment extends Fragment {
         return activeNetworkInfo != null && activeNetworkInfo.isConnected();
     }
 
+    private void showProgressBar() {
+        progressBar.setVisibility(View.VISIBLE);
+        mRecyclerView.setVisibility(View.GONE);
+    }
+
+    private void hideProgressBar() {
+        progressBar.setVisibility(View.GONE);
+        mRecyclerView.setVisibility(View.VISIBLE);
+    }
+
     @SuppressWarnings("unused") // Used to receive results from Otto bus
     @Subscribe
     public void onAsyncTaskResult(RetrofitResultEvent event) throws IOException {
         if(event.getMovieContainer() instanceof MovieContainer) {
             hideProgressBar();
 
-            MovieContainer movieContainer = (MovieContainer) event.getMovieContainer();
+            movieList = ((MovieContainer) event.getMovieContainer()).getMovies();
             // Set the movies in the adapter
-            mRecyclerView.setAdapter(new MovieRVAdapter(movieContainer.getMovies(), mListener, getActivity()));
+            mRecyclerView.setAdapter(new MovieRVAdapter(movieList, mListener, getActivity()));
         }
     }
 
@@ -109,34 +207,6 @@ public class MoviesFragment extends Fragment {
         if (isDisplayingFavourites) {
             askForFavourites();
         }
-    }
-
-    @Override
-    public void onAttach(Context context) {
-        super.onAttach(context);
-        if (context instanceof OnListFragmentInteractionListener) {
-            mListener = (OnListFragmentInteractionListener) context;
-        } else {
-            throw new RuntimeException(context.toString()
-                    + " must implement OnListFragmentInteractionListener");
-        }
-    }
-
-    @Override
-    public void onDetach() {
-        super.onDetach();
-        mListener = null;
-        OttoBus.getInstance().unregister(this);
-    }
-
-    private void showProgressBar() {
-        progressBar.setVisibility(View.VISIBLE);
-        mRecyclerView.setVisibility(View.GONE);
-    }
-
-    private void hideProgressBar() {
-        progressBar.setVisibility(View.GONE);
-        mRecyclerView.setVisibility(View.VISIBLE);
     }
 
     /**
@@ -177,7 +247,9 @@ public class MoviesFragment extends Fragment {
             }
             hideProgressBar();
 
-            mRecyclerView.setAdapter(new MovieRVAdapter(moviesInDB, mListener, getActivity()));
+            // Set the favourite movies in the adapter
+            movieList = moviesInDB;
+            mRecyclerView.setAdapter(new MovieRVAdapter(movieList, mListener, getActivity()));
         }
     }
 }

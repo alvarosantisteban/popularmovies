@@ -26,25 +26,27 @@ public class MainActivity extends AppCompatActivity implements MoviesFragment.On
     public static final int POS_FAVOURITES = 2;
     protected static final String EXTRA_MOVIE = "ExtraMovie";
     private static final String SPINNER_POS = "spinnerPos";
+    private static final String FRAGMENT_BUNDLE_KEY = "fragmentBundleKey";
 
     // Used to distinguish between real user touches and automatic calls on onItemSelected
     private boolean hasUserTouchedSpinner = false;
 
+    private MoviesFragment moviesFragment;
     private Spinner spinner;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
-    }
 
-    @Override
-    protected void onStop() {
-        super.onStop();
-
-        SharedPreferences.Editor editor = PreferenceManager.getDefaultSharedPreferences(this).edit();
-        editor.putInt(SPINNER_POS, spinner.getSelectedItemPosition());
-        editor.apply();
+        if (savedInstanceState == null) {
+            //  Ask for data to API / Databank
+            moviesFragment = (MoviesFragment) getSupportFragmentManager().findFragmentById(R.id.movies_fragment);
+            filterBySpinnerPos(PreferenceManager.getDefaultSharedPreferences(this).getInt(SPINNER_POS, POS_MOST_POPULAR));
+        } else {
+            //Restore the fragment's instance
+            moviesFragment = (MoviesFragment) getSupportFragmentManager().getFragment(savedInstanceState, FRAGMENT_BUNDLE_KEY);
+        }
     }
 
     @Override
@@ -76,7 +78,7 @@ public class MainActivity extends AppCompatActivity implements MoviesFragment.On
                 return false;
             }
         });
-        filterBySpinnerPos(spinnerPos);
+
         return true;
     }
 
@@ -107,5 +109,18 @@ public class MainActivity extends AppCompatActivity implements MoviesFragment.On
     @Override
     public void onNothingSelected(AdapterView<?> parent) {
         // Do nothing
+    }
+
+    @Override
+    protected void onSaveInstanceState(Bundle outState) {
+        super.onSaveInstanceState(outState);
+
+        //Save the fragment's instance
+        getSupportFragmentManager().putFragment(outState, FRAGMENT_BUNDLE_KEY, moviesFragment);
+
+        // Save the spinner position
+        SharedPreferences.Editor editor = PreferenceManager.getDefaultSharedPreferences(this).edit();
+        editor.putInt(SPINNER_POS, spinner.getSelectedItemPosition());
+        editor.apply();
     }
 }
