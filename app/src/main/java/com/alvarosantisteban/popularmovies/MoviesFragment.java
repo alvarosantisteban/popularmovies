@@ -6,6 +6,7 @@ import android.net.ConnectivityManager;
 import android.net.NetworkInfo;
 import android.os.AsyncTask;
 import android.os.Bundle;
+import android.os.Handler;
 import android.os.Parcelable;
 import android.support.annotation.Nullable;
 import android.support.v4.app.Fragment;
@@ -34,7 +35,6 @@ public class MoviesFragment extends Fragment {
 
     private static final String TAG = MoviesFragment.class.getSimpleName();
 
-    private static final String LIST_STATE_PARCELABLE = "listState";
     private static final String MOVIE_LIST = "movieList";
     private static final String LIST_POS = "listPosition";
 
@@ -46,9 +46,9 @@ public class MoviesFragment extends Fragment {
     private RecyclerView mRecyclerView;
     private ProgressBar progressBar;
     private boolean isDisplayingFavourites;
-    private Parcelable mListState;
     private List<Movie> movieList;
     private int currentPosition;
+    private boolean hasBeenScrolledAutomatically;
 
     /**
      * Mandatory empty constructor for the fragment manager to instantiate the
@@ -81,6 +81,8 @@ public class MoviesFragment extends Fragment {
 
         OttoBus.getInstance().register(this);
 
+        scrollToLastVisitedPosition();
+
         return view;
     }
 
@@ -92,36 +94,10 @@ public class MoviesFragment extends Fragment {
         if(savedInstanceState != null) {
             hideProgressBar();
 
-            mListState = savedInstanceState.getParcelable(LIST_STATE_PARCELABLE);
             movieList = savedInstanceState.getParcelableArrayList(MOVIE_LIST);
+            currentPosition = savedInstanceState.getInt(LIST_POS);
 
             mRecyclerView.setAdapter(new MovieRVAdapter(movieList, mListener, getActivity()));
-
-            currentPosition = savedInstanceState.getInt(LIST_POS);
-        }
-    }
-
-    @Override
-    public void onResume() {
-        super.onResume();
-        restoreLayoutManagerPosition(currentPosition);
-    }
-
-    private void restoreLayoutManagerPosition(final int currentVisiblePosition) {
-        if (mListState != null) {
-            // Restore the position (1)
-//            mRecyclerView.getLayoutManager().onRestoreInstanceState(mListState);
-
-            // Restore the position (2)
-             mRecyclerView.getLayoutManager().scrollToPosition(currentVisiblePosition);
-
-            // Restore the position (3)
-//            if (currentPosition!= -1) {
-//                ((LinearLayoutManager) mRecyclerView.getLayoutManager()).scrollToPositionWithOffset(currentPosition, 5);
-//            }
-
-            // Restore the position (4)
-//            mRecyclerView.scrollBy(0, currentVisiblePosition*10);
         }
     }
 
@@ -130,18 +106,8 @@ public class MoviesFragment extends Fragment {
         super.onSaveInstanceState(outState);
 
         // Save list's state
-        mListState = mRecyclerView.getLayoutManager().onSaveInstanceState();
-        outState.putParcelable(LIST_STATE_PARCELABLE, mListState);
         outState.putParcelableArrayList(MOVIE_LIST, (ArrayList<? extends Parcelable>) movieList);
-
-//        (2)
-        currentPosition = ((GridLayoutManager) mRecyclerView.getLayoutManager()).findFirstCompletelyVisibleItemPosition();
-
-        // (3)
-//        currentPosition= ((GridLayoutManager) mRecyclerView.getLayoutManager()).findFirstVisibleItemPosition();
-//        View startView = mRecyclerView.getChildAt(0);
-//        topView = (startView == null) ? 0 : (startView.getTop() - mRecyclerView.getPaddingTop());
-
+        currentPosition = ((GridLayoutManager) mRecyclerView.getLayoutManager()).findFirstVisibleItemPosition();
         outState.putInt(LIST_POS, currentPosition);
     }
 
@@ -186,6 +152,19 @@ public class MoviesFragment extends Fragment {
     private void hideProgressBar() {
         progressBar.setVisibility(View.GONE);
         mRecyclerView.setVisibility(View.VISIBLE);
+    }
+
+    private void scrollToLastVisitedPosition() {
+        if(!hasBeenScrolledAutomatically) {
+            Handler handler = new Handler();
+            Runnable r = new Runnable() {
+                public void run() {
+                    mRecyclerView.scrollToPosition(currentPosition);
+                    hasBeenScrolledAutomatically = true;
+                }
+            };
+            handler.postDelayed(r, 200);
+        }
     }
 
     @SuppressWarnings("unused") // Used to receive results from Otto bus
