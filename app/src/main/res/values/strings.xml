@@ -4,6 +4,7 @@
     <string name="film_vote">%.1f / 10</string>
     <string name="error_no_internet_connection">You have no internet connection</string>
     <string name="error_data_null">Data can not be displayed</string>
+    <string name="error_no_appropriate_app">You do not have an application that can display the requested information</string>
 
     <string name="detail_fav_button">Mark as\nfavourite</string>
     <string name="detail_unfav_button">Remove from\nfavourites</string>

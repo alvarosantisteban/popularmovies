@@ -9,12 +9,14 @@ import android.os.Bundle;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
+import android.util.Log;
 import android.view.View;
 import android.widget.Button;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.ProgressBar;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import com.alvarosantisteban.popularmovies.api.MoviesAPI;
 import com.alvarosantisteban.popularmovies.api.RetrofitResultEvent;
@@ -61,7 +63,13 @@ public class DetailActivity extends AppCompatActivity implements OnListInteracti
 
         OttoBus.getInstance().register(this);
 
-        movie = getIntent().getParcelableExtra(EXTRA_MOVIE);
+        Bundle extras = getIntent().getExtras();
+        if (extras != null) {
+            movie = extras.getParcelable(EXTRA_MOVIE);
+        } else {
+            Toast.makeText(this, R.string.error_data_null, Toast.LENGTH_SHORT).show();
+            Log.e(TAG, "The intent does not contain the parcelable with the movie.");
+        }
 
         ImageView poster = (ImageView) findViewById(R.id.detail_movie_poster);
         TextView title = (TextView) findViewById(R.id.detail_movie_title);
@@ -157,12 +165,25 @@ public class DetailActivity extends AppCompatActivity implements OnListInteracti
 
     @Override
     public void onItemClicked(MovieReview movieReview) {
-        startActivity(new Intent(Intent.ACTION_VIEW, Uri.parse(movieReview.getUrl())));
+        Intent openMovieReview = new Intent(Intent.ACTION_VIEW, Uri.parse(movieReview.getUrl()));
+
+        startIntentSafely(openMovieReview);
     }
 
     @Override
     public void onItemClicked(MovieTrailer movieTrailer) {
-        startActivity(new Intent(Intent.ACTION_VIEW, Uri.parse("http://www.youtube.com/watch?v=" +movieTrailer.getKey())));
+        Intent openTrailerIntent = new Intent(Intent.ACTION_VIEW, Uri.parse("http://www.youtube.com/watch?v=" + movieTrailer.getKey()));
+
+        startIntentSafely(openTrailerIntent);
+    }
+
+    private void startIntentSafely(Intent openMovieReview) {
+        // Verify that the intent will resolve to an activity
+        if (openMovieReview.resolveActivity(getPackageManager()) != null) {
+            startActivity(openMovieReview);
+        } else {
+            Toast.makeText(this, R.string.error_no_appropriate_app, Toast.LENGTH_SHORT).show();
+        }
     }
 
     public void onFavButtonClicked(View view) {
