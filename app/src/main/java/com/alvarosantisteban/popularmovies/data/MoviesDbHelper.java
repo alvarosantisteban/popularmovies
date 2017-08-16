@@ -33,7 +33,14 @@ public class MoviesDbHelper extends SQLiteOpenHelper {
 
     @Override
     public void onUpgrade(SQLiteDatabase db, int oldVersion, int newVersion) {
-        db.execSQL("DROP TABLE IF EXISTS " + MoviesContract.Movie.TABLE_NAME);
-        onCreate(db);
+        // Following code is commented because no changes are needed to the table so far, but if
+        // they are needed in the future, they should follow the pattern proposed in the following
+        // link: https://thebhwgroup.com/blog/how-android-sqlite-onupgrade
+//        if (oldVersion < 2) {
+//            db.execSQL(DATABASE_ALTER_MOVIE_1);
+//        }
+//        if (oldVersion < 3) {
+//            db.execSQL(DATABASE_ALTER_MOVIE_2);
+//        }
     }
 }
