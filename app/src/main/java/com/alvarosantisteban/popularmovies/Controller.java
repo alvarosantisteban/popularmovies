@@ -14,7 +14,6 @@ import retrofit2.Response;
 import retrofit2.Retrofit;
 import retrofit2.converter.jackson.JacksonConverterFactory;
 
-import static com.alvarosantisteban.popularmovies.MainActivity.POS_MOST_POPULAR;
 import static com.alvarosantisteban.popularmovies.MainActivity.POS_TOP_RATED;
 
 /**
@@ -33,17 +32,16 @@ class Controller implements Callback<MovieContainer> {
                 .build();
 
         MoviesAPI moviesAPI = retrofit.create(MoviesAPI.class);
-        Call<MovieContainer> call = moviesAPI.getPopularMovies(BuildConfig.TMDB_API_KEY);
+
+        Call<MovieContainer> call;
         switch (endPoint) {
-            case POS_MOST_POPULAR:
-                call = moviesAPI.getPopularMovies(BuildConfig.TMDB_API_KEY);
-                break;
             case POS_TOP_RATED:
-                call = moviesAPI.getTopRatedMovies(BuildConfig.TMDB_API_KEY);
+                call = moviesAPI.getMoviesSortedBy(MoviesAPI.SORTED_BY_TOP_RATED, BuildConfig.TMDB_API_KEY);
                 break;
+            default:
+                call = moviesAPI.getMoviesSortedBy(MoviesAPI.SORTED_BY_POPULAR, BuildConfig.TMDB_API_KEY);
         }
         call.enqueue(this);
-
     }
 
     @Override

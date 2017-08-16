@@ -18,13 +18,11 @@ public interface MoviesAPI {
     String TMDB_IMAGE_BASE_URL = "http://image.tmdb.org/t/p/";
     String TMDB_IMAGE_QUALITY_PATH = "w342";
 
-    // FIXME I would ideally use @Header or an interceptor, but it appears not to be recognised by the API
+    String SORTED_BY_POPULAR = "popular";
+    String SORTED_BY_TOP_RATED = "top_rated";
 
-    @GET("movie/popular")
-    Call<MovieContainer> getPopularMovies(@Query("api_key") String apiKey);
-
-    @GET("movie/top_rated")
-    Call<MovieContainer> getTopRatedMovies(@Query("api_key") String apiKey);
+    @GET("movie/{sort}")
+    Call<MovieContainer> getMoviesSortedBy(@Path("sort") String sortedBy, @Query("api_key") String apiKey);
 
     @GET("movie/{id}/videos")
     Call<MovieTrailerContainer> getTrailers(@Path("id") String movieId, @Query("api_key") String apiKey);
