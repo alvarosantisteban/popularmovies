@@ -14,7 +14,9 @@ public final class MoviesContract {
 
     public static final String PATH_MOVIES = "movie";
 
-    private MoviesContract(){}
+    private MoviesContract(){
+        throw new AssertionError("This class should not be instanced");
+    }
 
     public static class Movie implements BaseColumns {
 

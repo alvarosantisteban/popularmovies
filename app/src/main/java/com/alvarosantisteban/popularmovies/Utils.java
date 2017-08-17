@@ -6,7 +6,7 @@ import android.support.annotation.NonNull;
 /**
  * Helper class with static methods.
  */
-public class Utils {
+public final class Utils {
 
     public static boolean isTabletOrLandscape(@NonNull Context context) {
         return context.getResources().getBoolean(R.bool.isTablet) || context.getResources().getBoolean(R.bool.isLandscape);
